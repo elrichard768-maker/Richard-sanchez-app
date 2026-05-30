@@ -1,0 +1,8 @@
+{
+  "name": "GrammarQuest Pro",
+  "description": "Una app interactiva y divertida para practicar gramática inglesa con niveles, racha diaria, duelos locales y repaso de vocabulario progresivo.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

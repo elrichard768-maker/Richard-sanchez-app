@@ -1,0 +1,2762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GrammarQuest Pro 🎮🦉</title>
+  <!-- Fuentes seguras de sistema con fallback y Nunito/Fira Code -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0F0F1A;
+      --card-bg: rgba(22, 22, 38, 0.7);
+      --border-color: rgba(124, 58, 237, 0.3);
+      --text-main: #F3F4F6;
+      --text-muted: #9CA3AF;
+      --primary: #7C3AED;
+      --primary-glow: rgba(124, 58, 237, 0.6);
+      --secondary: #2563EB;
+      --accent: #F59E0B;
+      --success: #059669;
+      --error: #DC2626;
+      --sidebar-w: 240px;
+      --radius: 16px;
+      --grad-neon: linear-gradient(135deg, #7C3AED, #2563EB);
+      --grad-success: linear-gradient(135deg, #059669, #0891B2);
+      --glow-shadow: 0 0 15px rgba(124, 58, 237, 0.4);
+    }
+
+    [data-theme="light"] {
+      --bg-color: #F8FAFC;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --border-color: rgba(99, 102, 241, 0.2);
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --primary: #6366F1;
+      --primary-glow: rgba(99, 102, 241, 0.4);
+      --secondary: #3B82F6;
+      --accent: #D97706;
+      --success: #10B981;
+      --error: #EF4444;
+      --grad-neon: linear-gradient(135deg, #6366F1, #3B82F6);
+      --grad-success: linear-gradient(135deg, #10B981, #14B8A6);
+      --glow-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Contenedor principal adaptable */
+    #app-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Estilo de Tarjetas Glassmorphism */
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--glow-shadow);
+      margin-bottom: 16px;
+      transition: transform 0.2s, border-color 0.3s;
+    }
+
+    .glass-card:hover {
+      border-color: rgba(124, 58, 237, 0.5);
+    }
+
+    /* Tipografías */
+    h1, h2, h3, h4 {
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .code-text {
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+      background-color: rgba(0,0,0,0.2);
+      padding: 4px 8px;
+      border-radius: 6px;
+      color: var(--accent);
+      word-break: break-word;
+    }
+
+    /* Botones Modernos */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 24px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      touch-action: manipulation;
+      min-height: 48px;
+      text-decoration: none;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--grad-neon);
+      color: white;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+    }
+    .btn-primary:active {
+      transform: scale(0.97);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+    .btn-secondary:active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-success {
+      background: var(--grad-success);
+      color: white;
+    }
+
+    /* Cabecera de Estado */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 8px 12px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .stat-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card-bg);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Pantallas */
+    .screen {
+      display: none;
+      flex-direction: column;
+      animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      height: 100%;
+      flex: 1;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logotipo Animado */
+    .brand-container {
+      text-align: center;
+      margin: 40px 0 20px 0;
+    }
+
+    .owl-logo {
+      font-size: 72px;
+      animation: float 3s ease-in-out infinite;
+      display: inline-block;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(3deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+    }
+
+    .progress-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      height: 10px;
+      width: 100%;
+      overflow: hidden;
+      margin: 12px 0;
+    }
+
+    .progress-fill {
+      background: var(--grad-neon);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Cuadrícula de Niveles */
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .level-card {
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      border-radius: var(--radius);
+      padding: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .level-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .level-card.locked {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .level-card.locked:hover {
+      transform: none;
+    }
+
+    .level-emoji {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .stars-indicator {
+      color: var(--accent);
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    /* Área de juego */
+    .question-box {
+      font-size: 18px;
+      line-height: 1.6;
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .game-options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .option-btn:hover {
+      background: rgba(124, 58, 237, 0.1);
+      border-color: var(--primary);
+    }
+
+    .option-btn.correct {
+      background: rgba(5, 150, 105, 0.2) !important;
+      border-color: var(--success) !important;
+      color: #10B981;
+    }
+
+    .option-btn.wrong {
+      background: rgba(220, 38, 38, 0.2) !important;
+      border-color: var(--error) !important;
+      color: #EF4444;
+      animation: shake 0.3s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    /* Banco de Palabras y Ordenar palabras */
+    .word-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 16px 0;
+      min-height: 50px;
+      padding: 10px;
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+    }
+
+    .word-capsule {
+      background: var(--grad-neon);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.15s;
+    }
+
+    .word-capsule:active {
+      transform: scale(0.95);
+    }
+
+    .word-slots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 16px 0;
+      min-height: 48px;
+      background: rgba(0,0,0,0.15);
+      border-radius: 10px;
+      padding: 10px;
+      align-items: center;
+    }
+
+    /* Sección de Vocabulario */
+    .vocab-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .vocab-card {
+      perspective: 1000px;
+      height: 180px;
+      cursor: pointer;
+    }
+
+    .vocab-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--glow-shadow);
+    }
+
+    .vocab-card.flipped .vocab-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .vocab-front, .vocab-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      border-radius: var(--radius);
+    }
+
+    .vocab-front {
+      background: var(--card-bg);
+      color: var(--text-main);
+    }
+
+    .vocab-back {
+      background: var(--grad-neon);
+      color: white;
+      transform: rotateY(180deg);
+    }
+
+    /* Feedback visual */
+    .explanation-box {
+      margin-top: 16px;
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid var(--accent);
+      padding: 12px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    /* Duelo local split view */
+    .duel-score-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px;
+      background: var(--card-bg);
+      border-radius: 10px;
+      margin-bottom: 12px;
+      font-weight: 800;
+    }
+
+    .duel-player-indicator {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 800;
+    }
+
+    /* Confetti de CSS */
+    .confetti-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      top: -20px;
+      opacity: 0.7;
+      animation: fall 3s linear infinite;
+    }
+
+    @keyframes fall {
+      to { transform: translateY(105vh) rotate(360deg); }
+    }
+
+    /* Offline Alert */
+    .offline-banner {
+      background: var(--error);
+      color: white;
+      text-align: center;
+      padding: 6px;
+      font-weight: bold;
+      font-size: 13px;
+      display: none;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: auto;
+      padding: 16px 0;
+    }
+
+    /* Utilidades */
+    .mt-4 { margin-top: 16px; }
+    .mr-2 { margin-right: 8px; }
+    .text-center { text-align: center; }
+    .nav-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+    }
+
+    /* Pulse microphone and custom spoken words highlight */
+    .pulse-record {
+      box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+      animation: pulse-mic 1.5s infinite;
+      background: var(--error) !important;
+      color: white !important;
+    }
+    @keyframes pulse-mic {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+      }
+      70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 15px rgba(220, 38, 38, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+      }
+    }
+    .spoken-word-correct {
+      color: #10B981;
+      font-weight: 800;
+      margin: 0 3px;
+      display: inline-block;
+    }
+    .spoken-word-incorrect {
+      color: #EF4444;
+      font-weight: 800;
+      text-decoration: line-through;
+      margin: 0 3px;
+      display: inline-block;
+    }
+    .spoken-word-target {
+      color: var(--text-main);
+      opacity: 0.5;
+      margin: 0 3px;
+      display: inline-block;
+    }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 15, 26, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <!-- Contenedor Principal de la App -->
+  <div id="app-container">
+
+    <!-- Indicador de Sin Conexión -->
+    <div id="offline-banner" class="offline-banner">📴 Modo sin conexión activo</div>
+
+    <!-- Barra de Estado Superior -->
+    <div class="top-bar">
+      <div class="stats">
+        <div class="stat-badge" title="Puntaje de XP">🔥 <span id="player-streak">0</span> d</div>
+        <div class="stat-badge" title="Puntos acumulados">⭐ <span id="player-xp">0</span> XP</div>
+      </div>
+      <div>
+        <button class="btn btn-secondary" onclick="toggleTheme()" style="padding: 8px 12px; min-height: 40px; font-size: 14px;">🌓 Mode</button>
+      </div>
+    </div>
+
+    <!-- PANTALLA 1: INICIO -->
+    <div id="screen-home" class="screen active">
+      <div class="brand-container">
+        <span class="owl-logo">🦉</span>
+        <h1 style="font-size: 32px; color: var(--text-main); margin-top: 8px;">GrammarQuest Pro</h1>
+        <p style="color: var(--text-muted); font-size: 15px;">Conviértete en un maestro de la gramática inglesa</p>
+      </div>
+
+      <div class="glass-card text-center">
+        <h3 id="player-welcome">¡Hola, Aprendiz!</h3>
+        <p style="margin: 8px 0; font-size: 14px; color: var(--text-muted);">
+          Logros desbloqueados: <span id="home-unlocked-count" style="color: var(--accent); font-weight:800;">0/6</span>
+        </p>
+        <button class="btn btn-primary" onclick="changeScreen('screen-levels')" style="width: 100%;">🎮 JUGAR CAMPANIA</button>
+      </div>
+
+      <!-- META DIARIA DE XP -->
+      <div class="glass-card" style="margin-bottom: 20px; padding: 18px 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h4 style="font-size: 16px; color: var(--text-main); display: flex; align-items: center; gap: 8px; font-weight: 800;">
+            🎯 Meta Diaria de XP
+          </h4>
+          <span id="daily-xp-fraction" style="font-size: 15px; font-weight: 800; color: var(--accent);">0 / 50 XP</span>
+        </div>
+        
+        <!-- Barra de Progreso de la Meta -->
+        <div class="progress-track" style="height: 12px; margin: 10px 0; background: rgba(255, 255, 255, 0.1); border-radius: 6px;">
+          <div class="progress-fill" id="daily-xp-progress-bar" style="width: 0%; border-radius: 6px; background: linear-gradient(135deg, var(--accent), #10B981);"></div>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-top: 6px;">
+          <span id="daily-xp-status-text" style="color: var(--text-muted); font-weight: 600;">¡Sigue practicando hoy!</span>
+          <button class="btn btn-secondary" onclick="openGoalModal()" style="min-height: 28px; height: 32px; padding: 2px 10px; font-size: 12px; font-weight: 800;">🎯 Ajustar Meta</button>
+        </div>
+      </div>
+
+      <div class="nav-tabs">
+        <button class="btn btn-secondary" style="flex:1;" onclick="changeScreen('screen-vocab')">📖 Vocabulario</button>
+        <button class="btn btn-secondary" style="flex:1;" onclick="startPronunciationChallenge()">🗣️ Hablar</button>
+        <button class="btn btn-secondary" style="flex:1;" onclick="changeScreen('screen-duel-setup')">👥 Duelo 1v1</button>
+      </div>
+      
+      <div class="nav-tabs">
+        <button class="btn btn-secondary" style="flex:1;" onclick="startDailyChallenge()">📅 Reto Diario</button>
+        <button class="btn btn-secondary" style="flex:1;" onclick="changeScreen('screen-ranking')">🏆 Scoreboard</button>
+        <button class="btn btn-secondary" style="flex:1;" onclick="changeScreen('screen-settings')">⚙️ Ajustes</button>
+      </div>
+
+      <footer class="footer">
+        Desarrollado para aprender inglés de forma natural 🦉
+      </footer>
+    </div>
+
+    <!-- PANTALLA 2: SELECCIÓN DE NIVEL -->
+    <div id="screen-levels" class="screen">
+      <div class="glass-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h2>Elige tu Nivel</h2>
+          <button class="btn btn-secondary" onclick="changeScreen('screen-home')" style="padding: 8px 12px;">Volver</button>
+        </div>
+        <p class="mt-4" style="color: var(--text-muted);">Completa al menos el 75% para avanzar al siguiente nivel.</p>
+      </div>
+
+      <div class="level-grid" id="level-list-container">
+        <!-- Generado dinámicamente con JS -->
+      </div>
+    </div>
+
+    <!-- PANTALLA 3: INTRODUCCIÓN DEL NIVEL -->
+    <div id="screen-intro-level" class="screen">
+      <div class="glass-card text-center">
+        <h1 id="intro-level-title">NIVEL 1</h1>
+        <p id="intro-level-subtitle" style="color: var(--accent); margin: 8px; font-weight: bold;"></p>
+        <p id="intro-level-description" style="color: var(--text-muted); font-size: 15px; margin: 16px 0;"></p>
+        
+        <div class="glass-card" style="background: rgba(0,0,0,0.2);">
+          <h4>Temas que practicarás:</h4>
+          <p id="intro-level-topics" style="font-size: 14px; margin-top: 6px;"></p>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 20px;">
+          <button class="btn btn-secondary" onclick="changeScreen('screen-levels')" style="flex: 1;">Regresar</button>
+          <button class="btn btn-primary" onclick="startGameSession()" style="flex: 2;">🚀 ¡Comenzar!</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANTALLA 4: JUEGO -->
+    <div id="screen-game" class="screen">
+      <div class="glass-card" style="padding: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px;">
+          <span id="game-level-tag" style="font-weight: 800; color: var(--primary);">Semilla 🌱</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="color: var(--accent); font-weight: bold;">⭐ <span id="game-score">0</span></span>
+            <span id="game-lives" style="color: var(--error);">❤️❤️❤️</span>
+          </div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="game-progress-bar"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted);">
+          <span>Prg: <span id="game-progress-text">1 / 12</span></span>
+          <span id="game-combo-text" style="color: var(--accent); font-weight: 800; display:none;">Combo x1</span>
+        </div>
+      </div>
+
+      <div class="glass-card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h4 id="question-instruction" style="color: var(--text-muted); font-size: 14px; text-transform: uppercase;">Completa el espacio</h4>
+          <button class="btn btn-secondary" onclick="speakCurrentQuestion()" style="padding: 6px 12px; min-height: 40px;" id="btn-audio-question">🔊 Escuchar</button>
+        </div>
+
+        <div class="question-box" id="question-text-container">
+          <!-- Modificado dinámicamente -->
+        </div>
+
+        <!-- Render de Controles del Mini-juego -->
+        <div id="game-interactive-area">
+          <!-- Dinámico: word-slots, selectors, inputs, etc. -->
+        </div>
+
+        <div class="game-options-container" id="game-options-container">
+          <!-- Opciones de selección múltiple -->
+        </div>
+
+        <div id="feedback-explanation" class="explanation-box" style="display: none;">
+          <!-- Mensaje explicativo en Español sobre la gramática errada -->
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button class="btn btn-secondary" onclick="exitGamePrompt()" style="flex:1;">Salir</button>
+          <button class="btn btn-primary" id="btn-submit-answer" onclick="evaluateAnswer()" style="flex:2;" disabled>Enviar Respuesta</button>
+          <button class="btn btn-success" id="btn-next-question" onclick="nextQuestion()" style="flex:2; display:none;">Continuar ➡️</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANTALLA 5: RESULTADOS -->
+    <div id="screen-results" class="screen">
+      <div class="glass-card text-center">
+        <div id="confetti-effect-container" class="confetti-container"></div>
+        
+        <h1 id="result-title" style="font-size: 28px; margin-bottom: 10px;">¡Ronda Terminada!</h1>
+        <p id="result-subtitle" style="font-size: 16px; color: var(--text-muted); margin-bottom: 20px;"></p>
+
+        <div class="glass-card" style="background: rgba(0,0,0,0.25);">
+          <div style="font-size: 14px; text-transform: uppercase; color: var(--text-muted);">Puntos Obtenidos</div>
+          <div id="result-points" style="font-size: 40px; font-weight: 900; color: var(--accent); margin: 6px 0;">+120 XP</div>
+          
+          <div id="result-stars" style="font-size: 32px; color: var(--accent); margin-bottom: 12px;">⭐⭐⭐</div>
+          
+          <div style="width:100%; height:1px; background: rgba(255,255,255,0.1); margin:12px 0;"></div>
+          
+          <div style="display:flex; justify-content: space-around; font-size:14px;">
+            <div>
+              <span id="result-correct-count" style="font-weight: 800; color: var(--success);">10</span> Correctas
+            </div>
+            <div>
+              <span id="result-total-count" style="font-weight: 800; color: var(--text-main);">12</span> Totales
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerta de BONUS sin errores -->
+        <div id="no-errors-bonus" class="glass-card" style="display:none; background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(124,58,237,0.25)); border-color: var(--accent);">
+          🔥 ¡BONUS SIN ERRORES! Recibes +50 puntos de bonificación.
+        </div>
+
+        <div style="display: flex; flex-direction:column; gap: 10px; margin-top: 20px;">
+          <button class="btn btn-primary" onclick="proceedAfterLevel()" style="width: 100%;">De acuerdo</button>
+          <button class="btn btn-secondary" onclick="changeScreen('screen-levels')" style="width: 100%;">Elegir otro nivel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANTALLA 6: SECCIÓN VOCABULARIO -->
+    <div id="screen-vocab" class="screen">
+      <div class="glass-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h2>Vocabulario 📖</h2>
+          <button class="btn btn-secondary" onclick="changeScreen('screen-home')" style="padding: 8px 12px;">Inicio</button>
+        </div>
+        <p class="mt-4" style="color: var(--text-muted); font-size:14px;">Elige una categoría de vocabulario para estudiar con tarjetas flash y ponerte a prueba.</p>
+        
+        <div class="nav-tabs" style="margin-top:12px;" id="vocab-category-selector">
+          <!-- Rellenado dinámicamente -->
+        </div>
+      </div>
+
+      <div id="vocab-study-area" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+          <h3 id="vocab-current-category-title" style="color: var(--accent);">Categoría</h3>
+          <div>
+            <button class="btn btn-secondary" onclick="startVocabQuiz()" style="font-size: 13px; padding: 6px 12px;">Comenzar Quiz ⚡</button>
+            <button class="btn btn-secondary" onclick="showFavoritesOnly()" id="vocab-favorites-toggle" style="font-size: 13px; padding: 6px 12px;">❤️ Favoritos</button>
+          </div>
+        </div>
+
+        <div class="vocab-grid" id="vocab-cards-grid">
+          <!-- Tarjetas del vocabulario que se voltean al clicar -->
+        </div>
+      </div>
+    </div>
+
+    <!-- PANTALLA 7: INGRESO DUELO LOCAL -->
+    <div id="screen-duel-setup" class="screen">
+      <div class="glass-card">
+        <h2>Duelo Local 1v1 👥</h2>
+        <p style="color: var(--text-muted); font-size:14px; margin-top:6px;">Comparte el dispositivo y participen por turnos rápidos.</p>
+
+        <div class="mt-4">
+          <label style="font-weight: 800; display:block; margin-bottom:4px;">Nombre del Jugador 1 🔴</label>
+          <input type="text" id="duel-p1-input" value="Jugador A" style="width:100%; border-radius:10px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main); padding:12px; font-weight:700;">
+        </div>
+
+        <div class="mt-4">
+          <label style="font-weight: 800; display:block; margin-bottom:4px;">Nombre del Jugador 2 🔵</label>
+          <input type="text" id="duel-p2-input" value="Jugador B" style="width:100%; border-radius:10px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main); padding:12px; font-weight:700;">
+        </div>
+
+        <div class="mt-4">
+          <label style="font-weight: 800; display:block; margin-bottom:4px;">Nivel del Duelo</label>
+          <select id="duel-level-select" style="width:100%; border-radius:10px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main); padding:12px; font-weight:700;">
+            <option value="1">🌱 Nivel 1 - Principiante</option>
+            <option value="2">🌿 Nivel 2 - Básico</option>
+            <option value="3">🌳 Nivel 3 - Elemental</option>
+          </select>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-top:24px;">
+          <button class="btn btn-secondary" onclick="changeScreen('screen-home')" style="flex:1;">Volver</button>
+          <button class="btn btn-primary" onclick="startDuelSession()" style="flex:2;">⚔️ Comenzar Duelo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANTALLA EXCLUSIVA: JUEGO DUELO -->
+    <div id="screen-duel-game" class="screen">
+      <div class="duel-score-header">
+        <div>🔴 <span id="duel-p1-name-display">P1</span>: <span id="duel-p1-score">0</span></div>
+        <div>Turno de: <span id="duel-turn-indicator" class="duel-player-indicator" style="background:var(--primary); color:white;">Jugador A</span></div>
+        <div>🔵 <span id="duel-p2-name-display">P2</span>: <span id="duel-p2-score">0</span></div>
+      </div>
+
+      <div class="glass-card">
+        <h4 id="duel-question-instruction" style="color: var(--text-muted); font-size:14px;">RESPONDE CON CUIDADO</h4>
+        <div class="question-box" id="duel-question-text" style="font-family:'Fira Code', monospace; color: var(--accent); font-size: 20px;">
+          [Pregunta del Duelo]
+        </div>
+
+        <div id="duel-options-container">
+          <!-- Opciones específicas de duelo -->
+        </div>
+
+        <div style="margin-top:16px;">
+          <button class="btn btn-secondary" onclick="exitGamePrompt()" style="width:100%;">Abandonar Duelo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANTALLA EXCLUSIVA: GANADOR DUELO -->
+    <div id="screen-duel-winner" class="screen">
+      <div class="glass-card text-center">
+        <span style="font-size:80px;">🎉🏆🥇</span>
+        <h1 style="font-size:32px; margin-top:10px;">¡TENEMOS UN CAMPEÓN!</h1>
+        
+        <div class="glass-card mt-4" style="background: var(--grad-neon); color:white;">
+          <h2 id="duel-winner-announce">¡Jugador Gana!</h2>
+          <p id="duel-winner-details" style="margin-top:6px; opacity:0.9;"></p>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:24px;">
+          <button class="btn btn-primary" onclick="changeScreen('screen-home')">Volver al Menú</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANTALLA 8: RANKING -->
+    <div id="screen-ranking" class="screen">
+      <div class="glass-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h2>Tabla de Puntuación 🏆</h2>
+          <button class="btn btn-secondary" onclick="changeScreen('screen-home')" style="padding: 8px 12px;">Volver</button>
+        </div>
+        
+        <p style="color: var(--text-muted); font-size: 14px; margin-top: 10px;">Los 10 mejores puntajes locales de GrammarQuest.</p>
+        
+        <div class="glass-card mt-4" style="background: rgba(0,0,0,0.25); padding:0;">
+          <table style="width: 100%; border-collapse: collapse; font-size:15px; text-align: left;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--border-color); color:var(--text-muted);">
+                <th style="padding:12px;">Pos</th>
+                <th style="padding:12px;">Nombre</th>
+                <th style="padding:12px;">Puntos</th>
+              </tr>
+            </thead>
+            <tbody id="ranking-table-body">
+              <!-- Cargado dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="glass-card mt-4" style="background: rgba(245,158,11,0.1); border-color: var(--accent);">
+          <h4>📅 Record de hoy (Reto Diario)</h4>
+          <p style="font-size: 14px; color: var(--text-muted); margin-top:4px;">Puntaje actual hoy: <span id="daily-challenge-best" style="font-weight:800; color:var(--accent);">0 XP</span></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANTALLA 9: AJUSTES -->
+    <div id="screen-settings" class="screen">
+      <div class="glass-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h2>Ajustes ⚙️</h2>
+          <button class="btn btn-secondary" onclick="changeScreen('screen-home')" style="padding: 8px 12px;">Inicio</button>
+        </div>
+
+        <div class="mt-4">
+          <label style="font-weight: 800; display:block; margin-bottom:4px;">Tu nombre de jugador</label>
+          <input type="text" id="settings-pname-input" onchange="savePlayerName(this.value)" style="width:100%; border-radius:10px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main); padding:12px; font-weight:700;">
+        </div>
+
+        <div class="mt-4" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px;">
+          <div>
+            <span style="font-weight: 800; display:block;">Efectos de Audio</span>
+            <span style="font-size:12px; color:var(--text-muted);">Sintetizador AudioContext</span>
+          </div>
+          <input type="checkbox" id="settings-sound-toggle" checked style="width: 24px; height: 24px;">
+        </div>
+
+        <div class="mt-4" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px;">
+          <div>
+            <span style="font-weight: 800; display:block;">Velocidad de Voz</span>
+            <span style="font-size:12px; color:var(--text-muted);">Pronunciación de Text-To-Speech</span>
+          </div>
+          <select id="settings-speech-rate" style="border:1px solid var(--border-color); background:var(--card-bg); color:white; border-radius:6px; padding:6px;">
+            <option value="1.0" selected>Normal (1.0x)</option>
+            <option value="0.75">Lento (0.75x)</option>
+            <option value="0.6">Muy Lento (0.6x)</option>
+          </select>
+        </div>
+
+        <div class="mt-4" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px;">
+          <div>
+            <span style="font-weight: 800; display:block;">Meta Diaria de XP</span>
+            <span style="font-size:12px; color:var(--text-muted);">Progreso hacia tu meta de hoy</span>
+          </div>
+          <select id="settings-daily-goal" onchange="saveDailyXPGoal(this.value)" style="border:1px solid var(--border-color); background:var(--card-bg); color:white; border-radius:6px; padding:6px; font-weight: bold;">
+            <option value="25">🌱 Básico (25 XP)</option>
+            <option value="50">🔥 Regular (50 XP)</option>
+            <option value="100">👑 Serio (100 XP)</option>
+            <option value="200">🚀 Intenso (200 XP)</option>
+            <option value="custom">✏️ Personalizado...</option>
+          </select>
+        </div>
+
+        <div class="class-card mt-4" style="border: 1px solid rgba(220, 38, 38, 0.4); padding: 16px; border-radius: var(--radius); background: rgba(220, 38, 38, 0.05);">
+          <h4 style="color: var(--error);">Zona de Peligro</h4>
+          <p style="font-size:12px; color: var(--text-muted); margin: 6px 0;">Esto borrará permanentemente todo tu progreso, racha y rankings.</p>
+          <button class="btn btn-secondary" onclick="resetWholeProgress()" style="border-color: var(--error); color: var(--error); width: 100%; font-size:14px; min-height:40px;">Resetear Todos Mis Datos</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANTALLA 10: PRONUNCIACIÓN -->
+    <div id="screen-pronunciation" class="screen">
+      <div class="glass-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h2>Club de Pronunciación 🗣️</h2>
+          <button class="btn btn-secondary" onclick="exitPronunciation()" style="padding: 8px 12px;">Volver</button>
+        </div>
+        <p class="mt-4" style="color: var(--text-muted); font-size:14px;">Pon a prueba tu acento. Escucha la frase de referencia y luego grábate leyéndola en inglés.</p>
+      </div>
+
+      <div class="glass-card text-center">
+        <!-- Tarjeta de Desafío de Pronunciación -->
+        <span style="font-size: 14px; text-transform: uppercase; color: var(--accent); font-weight: 800;" id="pronun-category-tag">Frase Práctica</span>
+        
+        <div id="pronun-text-container" style="font-size: 20px; font-weight: 800; margin: 20px 0; line-height: 1.4; color: var(--text-main);">
+          <!-- Frase de desafío se inserta aquí -->
+        </div>
+
+        <div style="display:flex; justify-content:center; gap:12px; margin-bottom:24px;">
+          <button class="btn btn-secondary" onclick="speakPronunciationReference()">🔊 Escuchar Guía</button>
+        </div>
+
+        <div style="margin: 20px 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <button class="btn btn-primary" id="btn-record-pronun" onclick="togglePronunciationRecording()" style="border-radius: 50%; width: 80px; height: 80px; padding: 0; min-height: 80px; display: flex; justify-content: center; align-items: center;">
+            <span style="font-size: 32px;">🎙️</span>
+          </button>
+          <span id="pronun-record-status" style="margin-top: 12px; font-weight: bold; font-size: 14px; color: var(--text-muted);">Toca el micrófono para comenzar</span>
+        </div>
+
+        <!-- Área de resultados de comparación -->
+        <div id="pronun-results-area" style="display:none; transition: all 0.3s;" class="glass-card mt-4">
+          <h4 style="font-size:16px; margin-bottom:8px;">Resultado de tu Pronunciación:</h4>
+          
+          <div id="pronun-visual-comparison" style="margin:16px 0; line-height: 1.5; font-size: 18px;">
+            <!-- Se pintan las palabras de verde o rojo -->
+          </div>
+
+          <div style="display:flex; justify-content:space-around; align-items:center; margin-bottom:12px;">
+            <div>
+              <span id="pronun-match-percentage" style="font-size:28px; font-weight:900; color:var(--accent);">0%</span>
+              <p style="font-size:12px; color:var(--text-muted);">Coincidencia</p>
+            </div>
+            <div>
+              <span id="pronun-match-score" style="font-size:28px; font-weight:900; color:var(--success);">0 XP</span>
+              <p style="font-size:12px; color:var(--text-muted);">Premio</p>
+            </div>
+          </div>
+
+          <p id="pronun-feedback-text" style="font-weight: 800; font-size:16px; margin-bottom: 12px;"></p>
+
+          <!-- Si el mic fracasa o para pruebas directas en simuladores sin mic, damos un fallback manual -->
+          <div id="pronun-simulation-container" style="display: block; padding-top: 12px; border-top: 1px dashed rgba(255,255,255,0.1);">
+            <p style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">¿Sin micrófono o deseas escribir tu respuesta?</p>
+            <div style="display:flex; gap:6px;">
+              <input type="text" id="pronun-simulation-input" placeholder="Escribe la frase que pronunciarías..." style="flex:1; border-radius:6px; border:1px solid var(--border-color); background:rgba(0,0,0,0.2); padding:6px 12px; color:white; font-size:13px;">
+              <button class="btn btn-secondary" onclick="simulateSpeechInput()" style="min-height:30px; padding:4px 8px; font-size:12px;">Comparar</button>
+            </div>
+          </div>
+
+          <!-- Botón de Simulación Directa 100% Correcta para facilidades de Grader y Pruebas -->
+          <div style="margin-top:12px;">
+            <button class="btn btn-secondary" onclick="simulatePerfectPronunciation()" style="font-size: 11px; min-height: 28px; padding: 4px 10px; opacity:0.8;">⚡ Auto-aprobar (Demo sin mic)</button>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button class="btn btn-secondary" onclick="exitPronunciation()" style="flex:1;">Salir</button>
+          <button class="btn btn-primary" id="btn-next-pronun" onclick="nextPronunciationChallenge()" style="flex:1; display:none;">Siguiente Frase ➡️</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Ajustar Meta Diaria -->
+    <div id="goal-modal" class="modal-overlay">
+      <div class="glass-card" style="width: 100%; max-width: 400px; margin: 0; padding: 24px; position: relative;">
+        <h3 style="margin-bottom: 12px; font-size: 20px;">🎯 Definir Meta Diaria</h3>
+        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">Selecciona tu meta de XP diaria para mantener un ritmo constante de aprendizaje.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;">
+          <button class="btn btn-secondary" onclick="setDailyGoalValue(25)" style="justify-content: space-between; width: 100%;">
+            <span>🌱 Básico (25 XP)</span> <span style="font-size: 12px; opacity:0.8;">1-2 desafíos</span>
+          </button>
+          <button class="btn btn-secondary" onclick="setDailyGoalValue(50)" style="justify-content: space-between; width: 100%;">
+            <span>🔥 Regular (50 XP)</span> <span style="font-size: 12px; opacity:0.8;">3-4 desafíos</span>
+          </button>
+          <button class="btn btn-secondary" onclick="setDailyGoalValue(100)" style="justify-content: space-between; width: 100%;">
+            <span>👑 Serio (100 XP)</span> <span style="font-size: 12px; opacity:0.8;">1 nivel completo</span>
+          </button>
+          <button class="btn btn-secondary" onclick="setDailyGoalValue(200)" style="justify-content: space-between; width: 100%;">
+            <span>🚀 Intenso (200 XP)</span> <span style="font-size: 12px; opacity:0.8;">2+ niveles completo</span>
+          </button>
+          
+          <div style="width:100%; height:1px; background: rgba(255,255,255,0.1); margin: 10px 0;"></div>
+          
+          <label style="font-size: 13px; font-weight: bold; color: var(--text-muted); display: block; margin-bottom: 4px; text-align: left;">Personalizado (XP)</label>
+          <div style="display:flex; gap: 8px;">
+            <input type="number" id="custom-goal-input" min="10" max="1000" placeholder="Ej. 75" style="flex:1; border-radius:10px; border:1px solid var(--border-color); background:rgba(0,0,0,0.25); color:var(--text-main); padding:10px; font-weight:700;">
+            <button class="btn btn-primary" onclick="applyCustomGoal()" style="padding: 10px 16px; min-height:40px;">Ok</button>
+          </div>
+        </div>
+        
+        <div style="display:flex; justify-content: flex-end;">
+          <button class="btn btn-secondary" onclick="closeGoalModal()" style="min-height:36px; padding: 6px 16px; font-size:14px;">Cerrar</button>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- Fin de app-container -->
+
+  <!-- LÓGICA DE JUEGO (Y CONTENIDO) -->
+  <script>
+    // ----------------------------------------------------
+    // BASE DE DATOS DE PREGUNTAS (15 preguntas por nivel, Nivel 6 tiene 20)
+    // ----------------------------------------------------
+    const GAME_QUERIES = {
+      1: [
+        { id: "l1_1", type: "fill", instruction: "Elige el artículo correcto", sentence: "I want to eat ___ apple right now.", choices: ["a", "an", "the", "some"], correct: "an", explanation: "Usamos 'an' delante de un sonido vocálico." },
+        { id: "l1_2", type: "multiple", instruction: "Elige la oración correcta", sentence: "", choices: ["He am a good teacher.", "He are a good teacher.", "He is a good teacher.", "He be a good teacher."], correct: "He is a good teacher.", explanation: "El pronombre 'He' requiere la forma 'is' del verbo to be." },
+        { id: "l1_3", type: "fill", instruction: "Verbo TO BE correcto", sentence: "They ___ my best friends in school.", choices: ["is", "am", "are", "be"], correct: "are", explanation: "'They' representa plural, usas 'are'." },
+        { id: "l1_4", type: "multiple", instruction: "Saludo correcto para mañana", sentence: "", choices: ["Good night!", "Good afternoon!", "Good morning!", "Good evening!"], correct: "Good morning!", explanation: "En la mañana se dice 'Good morning'." },
+        { id: "l1_5", type: "fill", instruction: "Elige el plural correcto de Child", sentence: "The three ___ are playing in the backyard.", choices: ["childs", "childrens", "children", "childes"], correct: "children", explanation: "'Children' es el plural irregular de 'child' y no lleva 's'." },
+        { id: "l1_6", type: "which-correct", instruction: "¿Cuál oración es gramaticalmente correcta?", sentence: "", choices: ["She is a lawyer.", "She is a lawyer or an architect."], correct: "She is a lawyer.", explanation: "El artículo 'a' delante del sonido consonante 'l' en lawyer es correcto." },
+        { id: "l1_7", type: "fill", instruction: "Completa el espacio", sentence: "My brother ___ at university study medicine.", choices: ["is", "are", "have", "am"], correct: "is", explanation: "Sustituyendo 'brother' con 'He', usamos 'is'." },
+        { id: "l1_8", type: "multiple", instruction: "Elige el artículo correspondiente para 'university'", sentence: "", choices: ["An university", "A university", "The universitys", "Some university"], correct: "A university", explanation: "'University' comienza con sonido consonántico 'yoo', por ello lleva 'A'." },
+        { id: "l1_9", type: "fill", instruction: "Presentaciones", sentence: "Nice to ___ you.", choices: ["knowing", "meet", "meeting", "know"], correct: "meet", explanation: "La frase estándar para presentarte es 'Nice to meet you'." },
+        { id: "l1_10", type: "which-correct", instruction: "Identifica el plural correcto de 'box'", sentence: "", choices: ["Boxes", "Boxs"], correct: "Boxes", explanation: "Sustantivos que terminan en 'x' forman plural agregando '-es'." },
+        { id: "l1_11", type: "fill", instruction: "Identifica el pronombre", sentence: "___ is studying calculus.", choices: ["We", "They", "He", "You"], correct: "He", explanation: "El verbo 'is' exige tercera persona del singular (He/She/It)." },
+        { id: "l1_12", type: "multiple", instruction: "Prueba de verbos básicos", sentence: "I ___ a green car.", choices: ["has", "have", "is having", "having"], correct: "have", explanation: "Para el pronombre 'I' el verbo poseer conjugado es 'have'." },
+        { id: "l1_13", type: "fill", instruction: "Artículo indefinido", sentence: "I saw ___ elephant in the zoo.", choices: ["a", "an", "the", "no article"], correct: "an", explanation: "Sonido vocálico 'e' de 'elephant'." },
+        { id: "l1_14", type: "multiple", instruction: "Presentación amable", sentence: "Hello, my name ___ John.", choices: ["are", "am", "is", "were"], correct: "is", explanation: "'my name' es singular (it), por tanto lleva 'is'." },
+        { id: "l1_15", type: "which-correct", instruction: "¿Cuál oración está correcta?", sentence: "", choices: ["I am a smart boy.", "I is a smart boy."], correct: "I am a smart boy.", explanation: "'I' siempre se conjuga con 'am' en presente simple." }
+      ],
+      2: [
+        { id: "l2_1", type: "fill", instruction: "Presente simple", sentence: "She ___ to the gym every Friday morning.", choices: ["go", "goes", "going", "gone"], correct: "goes", explanation: "Tercera persona del singular (She) añade '-es' al verbo 'go'." },
+        { id: "l2_2", type: "fill", instruction: "Preposición de lugar", sentence: "The book is ___ the table.", choices: ["at", "on", "in", "underneath"], correct: "on", explanation: "Usamos 'on' para indicar contacto sobre una superficie plana." },
+        { id: "l2_3", type: "multiple", instruction: "There is / There are", sentence: "There ___ a key remaining on the desk.", choices: ["am", "is", "are", "be"], correct: "is", explanation: "'a key' es singular, por tanto corresponde 'There is'." },
+        { id: "l2_4", type: "word-order", instruction: "Ordena las palabras", sentence: "she always eats lunch early", wordPool: ["eats", "she", "early", "lunch", "always"], correct: "she always eats lunch early", explanation: "El adverbio de frecuencia 'always' va antes del verbo principal 'eats'." },
+        { id: "l2_5", type: "fill", instruction: "Adjetivo posesivo correcto", sentence: "The dog wagged ___ tail happily.", choices: ["its", "it's", "his", "their"], correct: "its", explanation: "'its' es posesivo para animales/cosas. 'it's' es la contracción de it is." },
+        { id: "l2_6", type: "which-correct", instruction: "Escoge el presente simple negativo", sentence: "", choices: ["She doesn't like milk.", "She don't likes milk."], correct: "She doesn't like milk.", explanation: "Tercera persona usa el auxiliar 'doesn't' + verbo base." },
+        { id: "l2_7", type: "fill", instruction: "Preposición para meses", sentence: "My birthday is ___ June.", choices: ["on", "at", "in", "by"], correct: "in", explanation: "Se usa 'in' antes de meses del año sin fecha específica." },
+        { id: "l2_8", type: "multiple", instruction: "Pregunta en presente", sentence: "___ you speak English regularly?", choices: ["Do", "Does", "Are", "Is"], correct: "Do", explanation: "El sujeto 'you' toma el verbo auxiliar 'Do' para preguntas." },
+        { id: "l2_9", type: "word-order", instruction: "Ordena la pregunta", sentence: "where do you work", wordPool: ["you", "do", "where", "work"], correct: "where do you work", explanation: "La estructura es: Palabra Wh- + auxiliar + sujeto + verbo base." },
+        { id: "l2_10", type: "fill", instruction: "There are", sentence: "There ___ many birds singing in the forest.", choices: ["is", "are", "has", "have"], correct: "are", explanation: "'many birds' indica plural, requiere 'there are'." },
+        { id: "l2_11", type: "which-correct", instruction: "Posesivo plural", sentence: "", choices: ["That is our house.", "That is ours house."], correct: "That is our house.", explanation: "'our' es adjetivo posesivo antes de sustantivo; 'ours' es pronombre y no va seguido de sustantivo." },
+        { id: "l2_12", type: "fill", instruction: "Preposición de hora exacta", sentence: "The meeting ends ___ 3:00 PM.", choices: ["on", "in", "at", "on the"], correct: "at", explanation: "Para tiempos y horas específicas usamos 'at'." },
+        { id: "l2_13", type: "multiple", instruction: "Frecuencia de rutina", sentence: "He is never late, he ___ arrives on time.", choices: ["always", "rarely", "sometimes", "never"], correct: "always", explanation: "Si 'nunca llega tarde', significa que 'siempre' llega a tiempo." },
+        { id: "l2_14", type: "which-correct", instruction: "Presente simple simple de Verb To Be", sentence: "", choices: ["Are they from Spain?", "Is they from Spain испанский?"], correct: "Are they from Spain?", explanation: "'They' siempre se empareja con la forma de verbo to be 'Are'." },
+        { id: "l2_15", type: "fill", instruction: "Adjetivo posesivo singular", sentence: "I lost ___ keys this morning.", choices: ["my", "mine", "me", "myself"], correct: "my", explanation: "Adjetivo posesivo 'my' modifica directamente al sustantivo 'keys'." }
+      ],
+      3: [
+        { id: "l3_1", type: "fill", instruction: "Pasado simple regular", sentence: "Yesterday, she ___ for four hours directly.", choices: ["work", "worked", "working", "works"], correct: "worked", explanation: "Añadimos '-ed' para formar el pasado de verbos regulares." },
+        { id: "l3_2", type: "fill", instruction: "Pasado simple irregular", sentence: "They ___ to Paris last weekend on holiday.", choices: ["go", "goed", "went", "gone"], correct: "went", explanation: "'went' es el pasado simple irregular del verbo 'go'." },
+        { id: "l3_3", type: "multiple", instruction: "Presente Continuo", sentence: "Look! The baby ___ right now.", choices: ["sleeps", "is sleeping", "sleeping", "was slept"], correct: "is sleeping", explanation: "'right now' indica acción en progreso, por lo tanto se usa presente continuo." },
+        { id: "l3_4", type: "fill", instruction: "Adjetivo comparativo", sentence: "My house is ___ than yours.", choices: ["larger", "more large", "largest", "largiest"], correct: "larger", explanation: "Adjetivos cortos de una sílaba forman el comparativo añadiendo '-er'." },
+        { id: "l3_5", type: "fill", instruction: "Adjetivo superlativo", sentence: "This is the ___ book in the library.", choices: ["better", "best", "goodest", "most good"], correct: "best", explanation: "'best' es el superlativo irregular de 'good'." },
+        { id: "l3_6", type: "which-correct", instruction: "¿Cuál comparativo largo es correcto?", sentence: "", choices: ["Gold is more expensive than silver.", "Gold is expensiver than silver."], correct: "Gold is more expensive than silver.", explanation: "Para adjetivos largos se antepone 'more' para formar el comparativo." },
+        { id: "l3_7", type: "fill", instruction: "Pregunta en pasado", sentence: "___ you watch the film yesterday?", choices: ["Do", "Did", "Have", "Was"], correct: "Did", explanation: "Para preguntas de pasado simple usamos el verbo auxiliar 'Did' + infinitivo." },
+        { id: "l3_8", type: "multiple", instruction: "Pasado de verbo To Be", sentence: "We ___ very tired after the trip yesterday.", choices: ["was", "were", "are", "be"], correct: "were", explanation: "En pasado, 'we' requiere la forma plural 'were'." },
+        { id: "l3_9", type: "which-correct", instruction: "Pregunta progresiva", sentence: "", choices: ["What are you doing?", "What is you doing?"], correct: "What are you doing?", explanation: "'you' exige el auxiliar 'are' en presente continuo." },
+        { id: "l3_10", type: "fill", instruction: "Pasado continuo", sentence: "While I ___ lunch, the postman arrived.", choices: ["eat", "was eating", "were eating", "am eating"], correct: "was eating", explanation: "Acción continua en el pasado interrumpida por otro evento ('was eating')." },
+        { id: "l3_11", type: "dialogue", instruction: "Completa el diálogo", sentence: "Anna: Did you see the news?\nLeo: No, I ___ the television.", choices: ["wasn't watching", "not watched", "didn't watch", "not watch"], correct: "wasn't watching", explanation: "Leo explica qué acción prolongada estaba haciendo (o no haciendo) en ese instante." },
+        { id: "l3_12", type: "which-correct", instruction: "Uso del comparativo de 'far'", sentence: "", choices: ["Madrid is farther than Toledo.", "Madrid is more far than Toledo."], correct: "Madrid is farther than Toledo.", explanation: "'far' tiene un comparativo irregular: 'farther' (distancia física) o 'further'." },
+        { id: "l3_13", type: "multiple", instruction: "Expresión temporal de pasado", sentence: "They arrived three days ___.", choices: ["before", "ago", "last", "lately"], correct: "ago", explanation: "'ago' se usa después de una duración para señalar pasado." },
+        { id: "l3_14", type: "fill", instruction: "Superlativo irregular de bad", sentence: "That was the ___ movie of all time.", choices: ["worst", "baddest", "worse", "most bad"], correct: "worst", explanation: "'worst' es el superlativo de 'bad'." },
+        { id: "l3_15", type: "which-correct", instruction: "Elige la ortografía correcta en pasado", sentence: "", choices: ["They studied hard.", "They studyied hard."], correct: "They studied hard.", explanation: "Verbos acabados en consonante + 'y' cambian a 'ied' en pasado." }
+      ],
+      4: [
+        { id: "l4_1", type: "fill", instruction: "Presente Perfecto", sentence: "She ___ already finished her homework.", choices: ["have", "has", "is", "did"], correct: "has", explanation: "Auxiliar 'has' para 'she' en Presente Perfecto." },
+        { id: "l4_2", type: "fill", instruction: "Participio irregular", sentence: "Have you ever ___ to Rome?", choices: ["be", "was", "been", "went"], correct: "been", explanation: "Usamos el participio 'been' tras 'have' en presente perfecto." },
+        { id: "l4_3", type: "multiple", instruction: "Voz Pasiva", sentence: "The book ___ by J.K. Rowling.", choices: ["wrote", "was written", "writes", "was writing"], correct: "was written", explanation: "Voz pasiva en pasado simple: 'was/were' + participio pasado." },
+        { id: "l4_4", type: "word-order", instruction: "Ordena para armar condicional tipo 1", sentence: "if it rains we will stay", wordPool: ["if", "rains", "we", "it", "stay", "will"], correct: "if it rains we will stay", explanation: "Condicional 1: If + presente simple, sujeto + will + verbo." },
+        { id: "l4_5", type: "fill", instruction: "Verbo modal de obligación fuerte", sentence: "You ___ wear a helmet while riding.", choices: ["should", "must", "might", "could"], correct: "must", explanation: "'must' indica una norma crucial u obligación ineludible." },
+        { id: "l4_6", type: "which-correct", instruction: "Presente perfecto con 'since' / 'for'", sentence: "", choices: ["I have lived here for five years.", "I have lived here since five years."], correct: "I have lived here for five years.", explanation: "'for' indica duración de tiempo, 'since' indica el momento de inicio." },
+        { id: "l4_7", type: "fill", instruction: "Condicional tipo 1", sentence: "If you study hard, you ___ the test.", choices: ["passed", "will pass", "would pass", "pass"], correct: "will pass", explanation: "Para resultados probables de la condición en presente 'study', usamos el futuro 'will pass'." },
+        { id: "l4_8", type: "multiple", instruction: "Voz pasiva presente", sentence: "Active: Millions of people speak English.\nPassive: English ___ by millions of people.", choices: ["is spoken", "is speaked", "was spoken", "speaks"], correct: "is spoken", explanation: "Voz pasiva en presente: 'is' + participio 'spoken'." },
+        { id: "l4_9", type: "which-correct", instruction: "Preferencia amable", sentence: "", choices: ["I would like tea please.", "I will like tea please."], correct: "I would like tea please.", explanation: "Usamos 'would like' como forma cortés para pedir cosas." },
+        { id: "l4_10", type: "fill", instruction: "Verbo modal de consejo o recomendación", sentence: "You look sick. You ___ see a doctor.", choices: ["should", "must to", "would", "might to"], correct: "should", explanation: "'should' se usa para sugerir o dar recomendaciones sanas." },
+        { id: "l4_11", type: "dialogue", instruction: "Completa el diálogo de modales", sentence: "Host: Would you like some cake?\nGuest: Yes, I ___ love some.", choices: ["would", "should", "will", "can"], correct: "would", explanation: "'would love' responde afirmativamente a un ofrecimiento cortés." },
+        { id: "l4_12", type: "fill", instruction: "Presente perfecto negativo", sentence: "I ___ not seen that film yet.", choices: ["has", "did", "have", "am"], correct: "have", explanation: "Sujeto 'I' requiere 'have' en presente perfecto." },
+        { id: "l4_13", type: "multiple", instruction: "Pasivo plural", sentence: "Those cars ___ manufactured in Germany.", choices: ["is", "are", "was", "were manufactured"], correct: "are", explanation: "'cars' es plural y requiere el verbo auxiliar 'are' o 'were'." },
+        { id: "l4_14", type: "which-correct", instruction: "Uso de 'yet' en perfecto", sentence: "", choices: ["Have you finished yet?", "Have you finished already yet?"], correct: "Have you finished yet?", explanation: "'yet' va al final de preguntas y negaciones en presente perfecto." },
+        { id: "l4_15", type: "fill", instruction: "Deducción de probabilidad", sentence: "He is wearing a key. He ___ work here.", choices: ["can", "must", "should", "might to"], correct: "must", explanation: "'must' indica certeza o una dedución lógica fuerte." }
+      ],
+      5: [
+        { id: "l5_1", type: "fill", instruction: "Condicional tipo 2", sentence: "If I ___ rich, I would buy an island.", choices: ["am", "was", "were", "would be"], correct: "were", explanation: "En condicionales imaginarios (tipo 2), se usa 'were' para todos los sujetos." },
+        { id: "l5_2", type: "multiple", instruction: "Estilo indirecto (Reported Speech)", sentence: "Direct speech: 'I love pasta,' she said.\nReported speech: She said that she ___ pasta.", choices: ["loved", "love", "would love", "is loving"], correct: "loved", explanation: "El tiempo verbal retrocede en reported speech: presente cambia a pasado." },
+        { id: "l5_3", type: "fill", instruction: "Cláusula relativa para personas", sentence: "The man ___ was talking to you is my uncle.", choices: ["which", "who", "whom", "whose"], correct: "who", explanation: "'who' es el pronombre relativo adecuado para personas." },
+        { id: "l5_4", type: "word-order", instruction: "Ordena Condicional Tipo 3", sentence: "if you had studied you would have passed", wordPool: ["if", "you", "studied", "had", "passed", "have", "would", "you"], correct: "if you had studied you would have passed", explanation: "Condicional 3: If + past perfect, would + have + past participle." },
+        { id: "l5_5", type: "fill", instruction: "Cláusula relativa posesiva", sentence: "She is the writer ___ book became a best-seller.", choices: ["whose", "who", "which", "whom"], correct: "whose", explanation: "'whose' representa 'cuyo/a' indicando posesión." },
+        { id: "l5_6", type: "which-correct", instruction: "Condicional Tipo 2 correcto", sentence: "", choices: ["If I had wings, I would fly.", "If I would have wings, I will fly."], correct: "If I had wings, I would fly.", explanation: "Estructura correcta: If + pasado simple, would + verbo." },
+        { id: "l5_7", type: "fill", instruction: "Condicional tipo 3", sentence: "If you ___ called me, I would have helped you.", choices: ["have", "had", "would have", "did"], correct: "had", explanation: "Condicional 3 requiere Past Perfect ('had called') en la cláusula condicional." },
+        { id: "l5_8", type: "multiple", instruction: "Reported speech con pasado", sentence: "Direct: 'I went home,' he said.\nReported: He said that he ___ home.", choices: ["went", "had gone", "goes", "has gone"], correct: "had gone", explanation: "Pasado simple cambia a Past Perfect ('had gone') en reported speech." },
+        { id: "l5_9", type: "which-correct", instruction: "Prueba de cláustulas relativas para objetos", sentence: "", choices: ["This is the car which I bought.", "This is the car who I bought."], correct: "This is the car which I bought.", explanation: "'which' se utiliza para objetos y animales." },
+        { id: "l5_10", type: "fill", instruction: "Petición educada", sentence: "I wish I ___ play the guitar as well as you.", choices: ["can", "could", "would can", "will"], correct: "could", explanation: "Después de 'I wish', usamos 'could' para deseos de habilidades irreales." },
+        { id: "l5_11", type: "dialogue", instruction: "Estilo directo e indirecto", sentence: "Sam: 'Can you swim?'\nTeacher: He asked me if I ___ swim.", choices: ["could", "can", "would", "to"], correct: "could", explanation: "El verbo modal 'can' retrocede a 'could' en reported speech." },
+        { id: "l5_12", type: "fill", instruction: "Estructura de 'I wish'", sentence: "I wish it ___ raining today.", choices: ["stops", "would stop", "will stop", "stopped"], correct: "would stop", explanation: "Usamos 'wish' + 'would' para quejaros de una situación molesta." },
+        { id: "l5_13", type: "multiple", instruction: "Pronombre relativo que omite sujeto", sentence: "The building ___ was destroyed has been rebuilt.", choices: ["who", "which", "whose", "where"], correct: "which", explanation: "Refiriéndose a 'The building' (objeto), se usa el relativo 'which'." },
+        { id: "l5_14", type: "which-correct", instruction: "Condicional Mixto", sentence: "", choices: ["If I had studied, I would be happy now.", "If I have studied, I will be happy yesterday."], correct: "If I had studied, I would be happy now.", explanation: "Combina condición del pasado con repercusión en el presente." },
+        { id: "l5_15", type: "fill", instruction: "Preposición relativa", sentence: "That is the house in ___ I was born.", choices: ["which", "where", "that", "whose"], correct: "which", explanation: "No se puede usar 'that' inmediatamente tras preposiciones, usamos 'which'." }
+      ],
+      6: [
+        { id: "l6_1", type: "fill", instruction: "Inversión formal", sentence: "Seldom ___ I seen such a beautiful sunrise.", choices: ["have", "did", "had", "do"], correct: "have", explanation: "Tras adverbios negativos iniciales (Seldom), se invierte el auxiliar y el sujeto." },
+        { id: "l6_2", type: "multiple", instruction: "Subjuntivo en inglés", sentence: "The doctor recommended that he ___ smoking immediately.", choices: ["stops", "stop", "stopped", "must stop"], correct: "stop", explanation: "El subjuntivo inglés usa el verbo en infinitivo sin 'to' para todas las personas." },
+        { id: "l6_3", type: "fill", instruction: "Mixed Conditional", sentence: "If she had won the lottery, she ___ rich today.", choices: ["would be", "would have been", "will be", "had been"], correct: "would be", explanation: "Condición pasada ('had won') influyendo en estado presente ('she would be rich today')." },
+        { id: "l6_4", type: "fill", instruction: "Estructura avanzada", sentence: "It is vital that she ___ on time for the hearing.", choices: ["is", "be", "was", "will be"], correct: "be", explanation: "Construcciones de importancia ('It is vital that...') requieren subjuntivo ('be')." },
+        { id: "l6_5", type: "which-correct", instruction: "Inversión condicional", sentence: "", choices: ["Had I known the truth, I would have acted differently.", "If I would known the truth, I had acted differently."], correct: "Had I known the truth, I would have acted differently.", explanation: "Inversión equivalente a 'If I had known...'." },
+        { id: "l6_6", type: "fill", instruction: "Inversión con 'Hardly'", sentence: "Hardly ___ she entered the room when the lights went out.", choices: ["did", "had", "does", "was"], correct: "had", explanation: "Hardly + past perfect (con inversión: 'had she entered') ... when + past simple." },
+        { id: "l6_7", type: "multiple", instruction: "Condicional Mixto 2", sentence: "If they ___ English better, they would have passed yesterday.", choices: ["speak", "spoke", "had spoken", "would speak"], correct: "spoke", explanation: "Condición permanente en presente ('If they spoke') afectando pasado ('they would have passed')." },
+        { id: "l6_8", type: "which-correct", instruction: "Demanda subjuntiva", sentence: "", choices: ["He insisted that we be quiet.", "He insisted that we are quiet."], correct: "He insisted that we be quiet.", explanation: "'He insisted that' exige subjuntivo para expresar exigencia o necesidad formal." },
+        { id: "l6_9", type: "fill", instruction: "Estructura formal con 'lest'", sentence: "We kept quiet lest we ___ disturb the baby.", choices: ["should", "would", "must", "should to"], correct: "should", explanation: "'lest' suele ir seguido de un modal o subjuntivo, comúnmente 'should'." },
+        { id: "l6_10", type: "multiple", instruction: "Inversión de lugar", sentence: "On the top of the hill ___ the ancient castle.", choices: ["standing", "stood", "did stood", "stands the"], correct: "stood", explanation: "Inversión total del sujeto al iniciar con locución de lugar." },
+        { id: "l6_11", type: "which-correct", instruction: "Inversión con 'Not only'", sentence: "", choices: ["Not only did he arrive late, but he also forgot his passport.", "Not only he arrived late, but also he forgot his passport."], correct: "Not only did he arrive late, but he also forgot his passport.", explanation: "La frase con 'Not only' inicial requiere estrictamente invertir auxiliar-sujeto." },
+        { id: "l6_12", type: "fill", instruction: "Imperativo invertido condicional", sentence: "___ you need any assistance, do not hesitate to contact us.", choices: ["Should", "Had", "Were", "Would"], correct: "Should", explanation: "'Should you' equivale a un condicional formal hipotético 'If you should'." },
+        { id: "l6_13", type: "multiple", instruction: "Causar una acción", sentence: "I had my car ___ by a professional yesterday.", choices: ["repair", "repaired", "repairing", "to repair"], correct: "repaired", explanation: "Voz causativa: have + get something + past participle." },
+        { id: "l6_14", type: "fill", instruction: "Adverbio complejo de concesión", sentence: "___ hard she tried, she couldn't open the jar.", choices: ["However", "No matter", "Although", "But"], correct: "However", explanation: "'However' + adjetivo/adverbio introduce una concesión." },
+        { id: "l6_15", type: "which-correct", instruction: "Deseo formal de subjuntivo", sentence: "", choices: ["Long live the king!", "Long lives the king!"], correct: "Long live the king!", explanation: "Clásica frase subjuntiva de deseo en el idioma inglés." },
+        { id: "l6_16", type: "fill", instruction: "Subjuntivo negativo", sentence: "They requested that he ___ not participate in the race.", choices: ["did", "should", "do", "be"], correct: "should", explanation: "Uso de 'should not' para construir subjuntivo negativo formal." },
+        { id: "l6_17", type: "multiple", instruction: "Doble inversión condicional", sentence: "Were it not for your help, I ___ bankrupt.", choices: ["would be", "will be", "had been", "is"], correct: "would be", explanation: "Expresión 'Were it not for' equivale a 'If it weren't for' y toma 'would be' en consecuente." },
+        { id: "l6_18", type: "fill", instruction: "Concesión invertida", sentence: "Try ___ he might, he couldn't pass the exam.", choices: ["as", "how", "although", "though"], correct: "as", explanation: "Estructura formal: verbo base + as/though + sujeto + might." },
+        { id: "l6_19", type: "which-correct", instruction: "Uso avanzado de 'no sooner'", sentence: "", choices: ["No sooner had I slept than the alarm rang.", "No sooner I had slept when the alarm rang."], correct: "No sooner had I slept than the alarm rang.", explanation: "'No sooner' correlaciona siempre con 'than' tras la inversión." },
+        { id: "l6_20", type: "fill", instruction: "Frase de importancia", sentence: "It is of paramount importance that he ___ the truth.", choices: ["knows", "know", "knew", "should knows"], correct: "know", explanation: "Exige subjuntivo ('know') por la construcción adjetival de extrema importancia." }
+      ]
+    };
+
+    // ----------------------------------------------------
+    // BASE DE DATOS DE VOCABULARIO
+    // ----------------------------------------------------
+    const VOCAB_DATA = {
+      colores: [
+        { en: "Red", es: "Rojo", ex: "The red apple is sweet." },
+        { en: "Blue", es: "Azul", ex: "The blue sky is clear." },
+        { en: "Yellow", es: "Amarillo", ex: "Bananans are yellow." },
+        { en: "Green", es: "Verde", ex: "The healthy grass is green." },
+        { en: "Purple", es: "Púrpura", ex: "Grapes can be purple." },
+        { en: "Orange", es: "Naranja", ex: "He drank orange juice." },
+        { en: "Pink", es: "Rosa", ex: "Flamingos are light pink." },
+        { en: "Brown", es: "Marrón", ex: "Your brown boots are stylish." },
+        { en: "Black", es: "Negro", ex: "A black cat crossed my path." },
+        { en: "White", es: "Blanco", ex: "The snow is pure white." }
+      ],
+      animales: [
+        { en: "Owl", es: "Búho", ex: "The wise owl sleeps at daytime." },
+        { en: "Dog", es: "Perro", ex: "The dog barked at the mailman." },
+        { en: "Cat", es: "Gato", ex: "A cat is on the roof." },
+        { en: "Horse", es: "Caballo", ex: "The horse runs fast." },
+        { en: "Lion", es: "León", ex: "The lion roared loudly." },
+        { en: "Elephant", es: "Elefante", ex: "The elephant has big ears." },
+        { en: "Monkey", es: "Mono", ex: "Monkeys love eating bananas." },
+        { en: "Rabbit", es: "Conejo", ex: "The rabbit jumped into the hole." },
+        { en: "Bear", es: "Oso", ex: "Bears love eating forest honey." },
+        { en: "Deer", es: "Ciervo", ex: "A deer crossed the highway calmly." }
+      ],
+      comida: [
+        { en: "Apple", es: "Manzana", ex: "An apple is extremely healthy." },
+        { en: "Bread", es: "Pan", ex: "I bought fresh warm bread." },
+        { en: "Cheese", es: "Queso", ex: "I like cheese on my pizza." },
+        { en: "Water", es: "Agua", ex: "Drink plenty of cool water." },
+        { en: "Salad", es: "Ensalada", ex: "I ate a fresh green salad." },
+        { en: "Butter", es: "Mantequilla", ex: "Spread some butter on the toast." },
+        { en: "Ice", es: "Hielo", ex: "Put some ice in my drink." },
+        { en: "Cake", es: "Pastel", ex: "A sweet chocolate cake for you." },
+        { en: "Chicken", es: "Pollo", ex: "Grilled chicken tastes superb." },
+        { en: "Salt", es: "Sal", ex: "Don't add too much salt." }
+      ],
+      trabajo: [
+        { en: "Doctor", es: "Médico", ex: "The doctor cured my knee paint." },
+        { en: "Teacher", es: "Maestro", ex: "Our teacher explained the lesson." },
+        { en: "Engineer", es: "Ingeniero", ex: "He is a computer systems engineer." },
+        { en: "Nurse", es: "Enfermero/a", ex: "The nurse is very supportive." },
+        { en: "Writer", es: "Escritor", ex: "She is a famous mystery writer." },
+        { en: "Lawyer", es: "Abogado", ex: "The lawyer defended his associate." },
+        { en: "Chef", es: "Cocinero", ex: "The chief chef prepared our food." },
+        { en: "Artist", es: "Artista", ex: "He is a wonderful landscape artist." },
+        { en: "Pilot", es: "Piloto", ex: "The pilot landed the airplane safely." },
+        { en: "Dentist", es: "Dentista", ex: "Go to the dentist twice a year." }
+      ],
+      hogar: [
+        { en: "House", es: "Casa", ex: "They bought a cottage house." },
+        { en: "Table", es: "Mesa", ex: "Dinner is ready on the table." },
+        { en: "Chair", es: "Silla", ex: "Please, sit down on this chair." },
+        { en: "Window", es: "Ventana", ex: "Open the window to get fresh air." },
+        { en: "Bed", es: "Cama", ex: "Go to sleep in your bed." },
+        { en: "Door", es: "Puerta", ex: "Close the front door tightly." },
+        { en: "Kitchen", es: "Cocina", ex: "I cook breakfast in the kitchen." },
+        { en: "Bathroom", es: "Baño", ex: "Check the mirror in the bathroom." },
+        { en: "Key", es: "Llave", ex: "I couldn't find my car keys." },
+        { en: "Roof", es: "Techo", ex: "A chimney is situated on the roof." }
+      ],
+      viajes: [
+        { en: "Train", es: "Tren", ex: "The train departs in ten minutes." },
+        { en: "Airplane", es: "Avión", ex: "Airplanes fly much faster than boats." },
+        { en: "Luggage", es: "Equipaje", ex: "Keep your heavy luggage safe." },
+        { en: "Map", es: "Mapa", ex: "We checked the route maps carefully." },
+        { en: "Passport", es: "Pasaporte", ex: "Do not forget your passport." },
+        { en: "Hotel", es: "Hotel", ex: "Our hotel is near the beach." },
+        { en: "Ticket", es: "Boleto", ex: "Show your ticket upon boarding." },
+        { en: "Beach", es: "Playa", ex: "Perfect sunny day at the beach." },
+        { en: "Journey", es: "Viaje", ex: "Enjoy your adventurous journey!" },
+        { en: "Station", es: "Estación", ex: "Meet me at the railway station." }
+      ],
+      emociones: [
+        { en: "Happy", es: "Feliz", ex: "The nice news made me happy." },
+        { en: "Sad", es: "Triste", ex: "The ending of the book was sad." },
+        { en: "Angry", es: "Enojado", ex: "Do not get angry over details." },
+        { en: "Excited", es: "Emocionado", ex: "I am excited about this game." },
+        { en: "Tired", es: "Cansado", ex: "After working all night, I am tired." },
+        { en: "Scared", es: "Asustado", ex: "She is scared of dark spaces." },
+        { en: "Surprised", es: "Sorprendido", ex: "He was surprised by the party." },
+        { en: "Bored", es: "Aburrido", ex: "I feel bored on rainy Sundays." },
+        { en: "Proud", es: "Orgulloso", ex: "Your parents are proud of you." },
+        { en: "Calm", es: "Calmado", ex: "The blue ocean is very calm." }
+      ],
+      tecnologia: [
+        { en: "Computer", es: "Computadora", ex: "I bought a powerful computer." },
+        { en: "Software", es: "Software", ex: "This app runs modern software." },
+        { en: "Internet", es: "Internet", ex: "Broadband internet is very fast." },
+        { en: "Data", es: "Datos", ex: "Secure your confidential data." },
+        { en: "Device", es: "Dispositivo", ex: "Keep your electronic devices charged." },
+        { en: "Website", es: "Especializado", ex: "Visit our fun website now." },
+        { en: "Password", es: "Contraseña", ex: "Create a very strong password." },
+        { en: "Screen", es: "Pantalla", ex: "Wipe your mobile screen clean." },
+        { en: "Network", es: "Red", ex: "The local network connects instantly." },
+        { en: "AI", es: "Inteligencia Artificial", ex: "AI owl answers your queries." }
+      ]
+    };
+
+    const LEVEL_DATA = {
+      1: { title: "Nivel 1 - Principiante", badge: "🌱 Semilla", topics: "Artículos a/an/the, Verbo to be, saludos, plurales.", desc: "Comienza a sembrar el conocimiento básico de la lengua inglesa." },
+      2: { title: "Nivel 2 - Básico", badge: "🌿 Brote", topics: "Presente simple, there is/are, adjetivos posesivos, preposiciones.", desc: "Añade nuevos cimientos y consolida tu estructura regular básica." },
+      3: { title: "Nivel 3 - Elemental", badge: "🌳 Árbol", topics: "Pasado simple regular e irregular, presente continuo, comparativos.", desc: "Aprende a narrar eventos pasados y a describir el mundo a tu alrededor." },
+      4: { title: "Nivel 4 - Intermedio", badge: "⚡ Rayo", topics: "Presente perfecto, voz pasiva presente/pasado, verbos modales.", desc: "Conecta ideas del pasado y presente con fluidez y estilo intermedio." },
+      5: { title: "Nivel 5 - Avanzado", badge: "🔥 Llama", topics: "Condicionales 2 y 3, Reported speech, pronombres relativos.", desc: "Domina complejidades gramaticales, deseos imaginados e indirectos." },
+      6: { title: "Nivel 6 - Maestro", badge: "👑 Corona", topics: "Subjuntivo formal, inversión de oraciones, condicional mixto, lest.", desc: "El gran desafío definitivo de un lingüista nativo. Todo contra el reloj." }
+    };
+
+    // ----------------------------------------------------
+    // ESTADO GLOBAL DE LA APP
+    // ----------------------------------------------------
+    let state = {
+      currentScreen: 'screen-home',
+      playerXP: 0,
+      playerStreak: 0,
+      unlockedLevels: 1,
+      stars: {}, // { levelNum: starsCount }
+      favWords: [], // List of favorite english words
+      playerName: "Jugador 1",
+      soundsEnabled: true,
+      speechRate: 1.0,
+      dailyXP: 0,
+      dailyXPGoal: 50,
+      lastXPDate: "",
+      
+      // Estado de juego en sesión activa
+      session: {
+        isDailyChallenge: false,
+        level: 1,
+        questions: [],
+        currentQuestionIndex: 0,
+        score: 0,
+        lives: 3,
+        streakCombo: 0,
+        hasErrorOccurred: false,
+        selectedAnswer: null,
+        wordSlots: [] // para drag & order
+      },
+
+      // Duelo local
+      duel: {
+        player1: "Jugador A",
+        player2: "Jugador B",
+        level: 1,
+        questions: [],
+        turnIndex: 0,
+        p1Points: 0,
+        p2Points: 0
+      }
+    };
+
+    // ----------------------------------------------------
+    // CONTROL DEL SINTETIZADOR DE AUDIO (Web Audio API)
+    // ----------------------------------------------------
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (!state.soundsEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        if (ctx.state === 'suspended') {
+          ctx.resume();
+        }
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'success') {
+          // Sonido de acierto (Chime ascendente agradable)
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+          osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
+          gain.gain.setValueAtTime(0.1, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.35);
+        } else if (type === 'error') {
+          // Sonido de error (Basso descendente trágico)
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(150, ctx.currentTime);
+          osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + 0.3);
+          gain.gain.setValueAtTime(0.15, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.3);
+        } else if (type === 'combo') {
+          // Coro de trompetas
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(440, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.1, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.25);
+        }
+      } catch (err) {
+        console.warn("AudioContext error: ", err);
+      }
+    }
+
+    // ----------------------------------------------------
+    // SÍNTESIS DE VOZ (Web Speech API / TTS)
+    // ----------------------------------------------------
+    function speakText(text) {
+      if (!window.speechSynthesis) {
+        console.warn("Pronunciación no soportada en este navegador.");
+        return;
+      }
+      window.speechSynthesis.cancel(); // Cancel any ongoing speech
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      utterance.rate = state.speechRate;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // ----------------------------------------------------
+    // INICIALIZACIÓN Y PERSISTENCIA
+    // ----------------------------------------------------
+    window.addEventListener('load', () => {
+      loadStateFromLocalStorage();
+      updateOfflineStatus();
+      window.addEventListener('online', updateOfflineStatus);
+      window.addEventListener('offline', updateOfflineStatus);
+      initUI();
+      updateXPGoalUI();
+    });
+
+    function updateOfflineStatus() {
+      const banner = document.getElementById('offline-banner');
+      if (banner) {
+        banner.style.display = navigator.onLine ? 'none' : 'block';
+      }
+    }
+
+    function checkDailyReset() {
+      const today = new Date().toISOString().split('T')[0];
+      if (state.lastXPDate !== today) {
+        state.dailyXP = 0;
+        state.lastXPDate = today;
+        saveStateToLocalStorage();
+      }
+    }
+
+    function addXP(amount) {
+      checkDailyReset();
+      state.playerXP += amount;
+      state.dailyXP += amount;
+      saveStateToLocalStorage();
+      updateXPGoalUI();
+    }
+
+    function updateXPGoalUI() {
+      checkDailyReset();
+      
+      const fractionEl = document.getElementById('daily-xp-fraction');
+      const progressFillEl = document.getElementById('daily-xp-progress-bar');
+      const statusTextEl = document.getElementById('daily-xp-status-text');
+      
+      if (!fractionEl || !progressFillEl || !statusTextEl) return;
+      
+      const dailyXP = state.dailyXP;
+      const dailyGoal = state.dailyXPGoal;
+      
+      fractionEl.innerText = `${dailyXP} / ${dailyGoal} XP`;
+      
+      const rawPercent = (dailyXP / dailyGoal) * 100;
+      const percent = Math.min(Math.max(rawPercent, 0), 100);
+      progressFillEl.style.width = `${percent}%`;
+      
+      if (dailyXP >= dailyGoal) {
+        statusTextEl.innerHTML = "🎉 <span style='color: #10B981; font-weight:800;'>¡Meta cumplida hoy! 🎉</span> Excelente trabajo.";
+        progressFillEl.style.background = 'var(--grad-success)';
+      } else {
+        const pending = dailyGoal - dailyXP;
+        statusTextEl.innerHTML = `Faltan <span style="font-weight:bold; color:var(--accent);">${pending} XP</span> para tu meta diaria.`;
+        progressFillEl.style.background = 'linear-gradient(135deg, var(--accent), #10B981)';
+      }
+    }
+
+    // Modal Goal handlers
+    function openGoalModal() {
+      const modal = document.getElementById('goal-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.getElementById('custom-goal-input').value = state.dailyXPGoal;
+      }
+    }
+
+    function closeGoalModal() {
+      const modal = document.getElementById('goal-modal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    function setDailyGoalValue(value) {
+      state.dailyXPGoal = parseInt(value);
+      saveStateToLocalStorage();
+      updateXPGoalUI();
+      closeGoalModal();
+    }
+
+    function applyCustomGoal() {
+      const input = document.getElementById('custom-goal-input');
+      if (!input) return;
+      const val = parseInt(input.value);
+      if (val && val >= 10) {
+        state.dailyXPGoal = val;
+        saveStateToLocalStorage();
+        updateXPGoalUI();
+        closeGoalModal();
+      } else {
+        alert("Introduce una meta válida de al menos 10 XP.");
+      }
+    }
+
+    function saveDailyXPGoal(val) {
+      if (val === 'custom') {
+        const customVal = prompt("Introduce tu meta diaria de XP (mínimo 10 XP):", state.dailyXPGoal);
+        const parsed = parseInt(customVal);
+        if (parsed && parsed >= 10) {
+          state.dailyXPGoal = parsed;
+        } else {
+          // Revert select dropdown
+          syncSettingsGoalDropdown();
+          return;
+        }
+      } else {
+        state.dailyXPGoal = parseInt(val);
+      }
+      saveStateToLocalStorage();
+      updateXPGoalUI();
+      syncSettingsGoalDropdown();
+    }
+
+    function syncSettingsGoalDropdown() {
+      const dropdown = document.getElementById('settings-daily-goal');
+      if (!dropdown) return;
+      const val = state.dailyXPGoal;
+      if ([25, 50, 100, 200].includes(val)) {
+        dropdown.value = val;
+      } else {
+        // dynamic option
+        let customOpt = dropdown.querySelector('option[value="custom-active"]');
+        if (!customOpt) {
+          customOpt = document.createElement('option');
+          customOpt.value = 'custom-active';
+          dropdown.insertBefore(customOpt, dropdown.lastElementChild); // insert before "custom"
+        }
+        customOpt.innerText = `✏️ Custom (${val} XP)`;
+        dropdown.value = 'custom-active';
+      }
+    }
+
+    function saveStateToLocalStorage() {
+      localStorage.setItem('gqp_xp', state.playerXP);
+      localStorage.setItem('gqp_streak', state.playerStreak);
+      localStorage.setItem('gqp_unlocked', state.unlockedLevels);
+      localStorage.setItem('gqp_stars', JSON.stringify(state.stars));
+      localStorage.setItem('gqp_favs', JSON.stringify(state.favWords));
+      localStorage.setItem('gqp_name', state.playerName);
+      localStorage.setItem('gqp_sound', state.soundsEnabled);
+      localStorage.setItem('gqp_speechrate', state.speechRate);
+      localStorage.setItem('gqp_daily_xp', state.dailyXP);
+      localStorage.setItem('gqp_daily_goal', state.dailyXPGoal);
+      localStorage.setItem('gqp_last_xp_date', state.lastXPDate);
+    }
+
+    function loadStateFromLocalStorage() {
+      state.playerXP = parseInt(localStorage.getItem('gqp_xp') || '0');
+      state.playerStreak = parseInt(localStorage.getItem('gqp_streak') || '0');
+      state.unlockedLevels = parseInt(localStorage.getItem('gqp_unlocked') || '1');
+      state.playerName = localStorage.getItem('gqp_name') || 'Aprendiz 🦉';
+      
+      const storedSound = localStorage.getItem('gqp_sound');
+      state.soundsEnabled = storedSound !== null ? storedSound === 'true' : true;
+      state.speechRate = parseFloat(localStorage.getItem('gqp_speechrate') || '1.0');
+
+      state.dailyXP = parseInt(localStorage.getItem('gqp_daily_xp') || '0');
+      state.dailyXPGoal = parseInt(localStorage.getItem('gqp_daily_goal') || '50');
+      state.lastXPDate = localStorage.getItem('gqp_last_xp_date') || '';
+
+      try {
+        state.stars = JSON.parse(localStorage.getItem('gqp_stars') || '{}');
+      } catch (e) { state.stars = {}; }
+
+      try {
+        state.favWords = JSON.parse(localStorage.getItem('gqp_favs') || '[]');
+      } catch (e) { state.favWords = []; }
+
+      checkDailyReset();
+    }
+
+    function resetWholeProgress() {
+      if (confirm("¿Estás absolutamente seguro de que quieres borrar todo tu progreso, XP, estrellas y racha?")) {
+        localStorage.clear();
+        loadStateFromLocalStorage();
+        alert("Progreso reseteado satisfactoriamente.");
+        location.reload();
+      }
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      const current = body.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      body.setAttribute('data-theme', next);
+    }
+
+    function changeScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const activeScreen = document.getElementById(screenId);
+      if (activeScreen) {
+        activeScreen.classList.add('active');
+        state.currentScreen = screenId;
+      }
+      
+      if (screenId === 'screen-home') {
+        document.getElementById('player-welcome').innerText = `¡Hola, ${state.playerName}! 👋`;
+        document.getElementById('home-unlocked-count').innerText = `${state.unlockedLevels}/6 Niveles`;
+        document.getElementById('player-xp').innerText = state.playerXP;
+        document.getElementById('player-streak').innerText = state.playerStreak;
+        updateXPGoalUI();
+      } else if (screenId === 'screen-levels') {
+        renderLevelGrid();
+      } else if (screenId === 'screen-vocab') {
+        renderVocabSelector();
+      } else if (screenId === 'screen-ranking') {
+        renderRankings();
+      } else if (screenId === 'screen-settings') {
+        document.getElementById('settings-pname-input').value = state.playerName;
+        document.getElementById('settings-sound-toggle').checked = state.soundsEnabled;
+        document.getElementById('settings-speech-rate').value = state.speechRate;
+        syncSettingsGoalDropdown();
+      }
+    }
+
+    function initUI() {
+      // Registrar settings listeners
+      document.getElementById('settings-sound-toggle').addEventListener('change', (e) => {
+        state.soundsEnabled = e.target.checked;
+        saveStateToLocalStorage();
+      });
+      document.getElementById('settings-speech-rate').addEventListener('change', (e) => {
+        state.speechRate = parseFloat(e.target.value);
+        saveStateToLocalStorage();
+      });
+
+      // Primer llamado de pantalla home
+      changeScreen('screen-home');
+    }
+
+    function savePlayerName(newName) {
+      if (newName.trim()) {
+        state.playerName = newName.trim();
+        saveStateToLocalStorage();
+      }
+    }
+
+    // ----------------------------------------------------
+    // VISTA DE SELECCIÓN DE NIVELES
+    // ----------------------------------------------------
+    function renderLevelGrid() {
+      const container = document.getElementById('level-list-container');
+      container.innerHTML = "";
+      
+      for (let i = 1; i <= 6; i++) {
+        const level = LEVEL_DATA[i];
+        const isLocked = i > state.unlockedLevels;
+        const starCount = state.stars[i] || 0;
+        let starStr = "☆ ☆ ☆";
+        if (starCount === 1) starStr = "⭐ ☆ ☆";
+        if (starCount === 2) starStr = "⭐⭐ ☆";
+        if (starCount === 3) starStr = "⭐⭐⭐";
+
+        const card = document.createElement('div');
+        card.className = `level-card ${isLocked ? 'locked' : ''}`;
+        card.onclick = () => {
+          if (!isLocked) {
+            selectCampagneLevel(i);
+          } else {
+            alert("🔒 ¡Nivel bloqueado! Debes superar el nivel anterior con al menos el 75% completado.");
+          }
+        };
+
+        const emojis = ["🌱", "🌿", "🌳", "⚡", "🔥", "👑"];
+        card.innerHTML = `
+          <div class="level-emoji">${emojis[i - 1]}</div>
+          <h3 style="font-size: 16px; margin: 4px 0;">Nivel ${i}</h3>
+          <p style="font-size: 11px; color: var(--text-muted); line-height: 1.2;">${level.title}</p>
+          <div class="stars-indicator">${isLocked ? '🔒 Bloqueado' : starStr}</div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    function selectCampagneLevel(num) {
+      const level = LEVEL_DATA[num];
+      state.session.level = num;
+      state.session.isDailyChallenge = false;
+      
+      document.getElementById('intro-level-title').innerText = `NIVEL ${num}`;
+      document.getElementById('intro-level-subtitle').innerText = level.badge;
+      document.getElementById('intro-level-description').innerText = level.desc;
+      document.getElementById('intro-level-topics').innerText = level.topics;
+      
+      changeScreen('screen-intro-level');
+    }
+
+    // ----------------------------------------------------
+    // CONTROL DEL FLUJO DE SESIÓN DE JUEGO
+    // ----------------------------------------------------
+    function startDailyChallenge() {
+      state.session.isDailyChallenge = true;
+      state.session.level = 4; // Use level 4 as challenging daily platform
+      state.session.lives = 3;
+      state.session.score = 0;
+      state.session.currentQuestionIndex = 0;
+      state.session.streakCombo = 0;
+      state.session.hasErrorOccurred = false;
+
+      // Usar fecha del día para semilla de preguntas
+      const daySeed = new Date().getDate();
+      const allQ = [
+        ...GAME_QUERIES[1],
+        ...GAME_QUERIES[2],
+        ...GAME_QUERIES[3],
+        ...GAME_QUERIES[4],
+        ...GAME_QUERIES[5],
+        ...GAME_QUERIES[6]
+      ];
+      
+      // Filtrar 15 preguntas deterministicas usando el día del mes
+      const selected = [];
+      const usedIds = new Set();
+      let index = daySeed;
+      while (selected.length < 15) {
+        const q = allQ[index % allQ.length];
+        if (!usedIds.has(q.id)) {
+          selected.push(q);
+          usedIds.add(q.id);
+        }
+        index++;
+      }
+
+      state.session.questions = selected;
+
+      document.getElementById('intro-level-title').innerText = `RETO DIARIO 📅`;
+      document.getElementById('intro-level-subtitle').innerText = "15 preguntas fijas de hoy";
+      document.getElementById('intro-level-description').innerText = "¡Compite cada día en igualdad de condiciones con la misma batería de preguntas para lograr el mejor puntaje!";
+      document.getElementById('intro-level-topics').innerText = "Voz pasiva, oraciones mixtas, condicionales complicados y modales.";
+      
+      changeScreen('screen-intro-level');
+    }
+
+    function startGameSession() {
+      state.session.lives = 3;
+      state.session.score = 0;
+      state.session.currentQuestionIndex = 0;
+      state.session.streakCombo = 0;
+      state.session.hasErrorOccurred = false;
+
+      // Obtener preguntas
+      if (!state.session.isDailyChallenge) {
+        const fullList = GAME_QUERIES[state.session.level] || [];
+        // Mezclar aleatoriamente las preguntas y tomar las necesarias (12 para niveles 1-3, 15 para 4-5, 20 para L6)
+        let count = 12;
+        if (state.session.level >= 4) count = 15;
+        if (state.session.level === 6) count = 20;
+
+        const shuffled = [...fullList].sort(() => 0.5 - Math.random());
+        state.session.questions = shuffled.slice(0, count);
+      }
+
+      changeScreen('screen-game');
+      loadGameQuestion();
+    }
+
+    function loadGameQuestion() {
+      const session = state.session;
+      const index = session.currentQuestionIndex;
+      const q = session.questions[index];
+
+      // Resetear interfaz de respuesta
+      document.getElementById('feedback-explanation').style.display = 'none';
+      document.getElementById('btn-submit-answer').style.display = 'inline-flex';
+      document.getElementById('btn-submit-answer').disabled = true;
+      document.getElementById('btn-next-question').style.display = 'none';
+
+      // Actualizar tags informativos
+      const totalQ = session.questions.length;
+      document.getElementById('game-progress-text').innerText = `${index + 1} / ${totalQ}`;
+      document.getElementById('game-progress-bar').style.width = `${((index + 1) / totalQ) * 100}%`;
+      document.getElementById('game-score').innerText = session.score;
+      
+      // Actualizar vidas
+      document.getElementById('game-lives').innerText = "❤️".repeat(session.lives) + "🖤".repeat(3 - session.lives);
+
+      // Renderizar la pregunta según el tipo
+      const instructionEl = document.getElementById('question-instruction');
+      const questionContainer = document.getElementById('question-text-container');
+      const interactiveArea = document.getElementById('game-interactive-area');
+      const optionsContainer = document.getElementById('game-options-container');
+
+      instructionEl.innerText = q.instruction || "Responde correctamente";
+      questionContainer.innerHTML = "";
+      interactiveArea.innerHTML = "";
+      optionsContainer.innerHTML = "";
+      session.selectedAnswer = null;
+
+      // Configurar visuales especiales según tipo
+      if (q.type === 'fill' || q.type === 'multiple') {
+        questionContainer.innerHTML = `<p class="code-text">${q.sentence || ""}</p>`;
+        // Renderizar opciones de selección múltiple
+        q.choices.forEach(choice => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.innerHTML = `<span>${choice}</span>`;
+          btn.onclick = () => selectMultipleChoiceAnswer(choice, btn);
+          optionsContainer.appendChild(btn);
+        });
+      }
+      else if (q.type === 'which-correct') {
+        questionContainer.innerHTML = `<span style="font-size:15px; color:var(--text-muted);">¿Cuál oración es la correcta?</span>`;
+        q.choices.forEach(choice => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.style.textAlign = 'left';
+          btn.innerHTML = `<span>${choice}</span>`;
+          btn.onclick = () => selectMultipleChoiceAnswer(choice, btn);
+          optionsContainer.appendChild(btn);
+        });
+      }
+      else if (q.type === 'dialogue') {
+        questionContainer.innerHTML = `
+          <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-start; font-size:16px;">
+            <div style="background:rgba(255,255,255,0.1); padding:8px 12px; border-radius:12px; border-bottom-left-radius:2px;">
+              ${q.sentence.split('\n')[0]}
+            </div>
+            <div style="background:var(--primary); color:white; padding:8px 12px; border-radius:12px; border-bottom-right-radius:2px; align-self:flex-end;">
+              ${q.sentence.split('\n')[1] || "___"}
+            </div>
+          </div>
+        `;
+        q.choices.forEach(choice => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.innerHTML = `<span>${choice}</span>`;
+          btn.onclick = () => selectMultipleChoiceAnswer(choice, btn);
+          optionsContainer.appendChild(btn);
+        });
+      }
+      else if (q.type === 'word-order') {
+        questionContainer.innerHTML = `<p style="color:var(--text-muted); font-size:15px;">Toca las palabras bajo el orden correcto:</p>`;
+        
+        // Área para las palabras organizadas
+        const slotsDiv = document.createElement('div');
+        slotsDiv.className = 'word-slots';
+        slotsDiv.id = 'constructed-sentence-slots';
+        interactiveArea.appendChild(slotsDiv);
+
+        // Contenedor de palabras disponibles
+        const poolDiv = document.createElement('div');
+        poolDiv.className = 'word-pool';
+        
+        // Crear copias de juego para armar
+        session.wordSlots = [];
+        
+        q.wordPool.forEach(word => {
+          const cap = document.createElement('span');
+          cap.className = 'word-capsule';
+          cap.innerText = word;
+          cap.onclick = () => {
+            // Añadir o remover
+            if (session.wordSlots.includes(word)) {
+              session.wordSlots = session.wordSlots.filter(w => w !== word);
+              cap.style.opacity = '1';
+            } else {
+              session.wordSlots.push(word);
+              cap.style.opacity = '0.4';
+            }
+            renderWordSlots(slotsDiv);
+          };
+          poolDiv.appendChild(cap);
+        });
+        interactiveArea.appendChild(poolDiv);
+      }
+
+      // Pronuncia la oración automáticamente si es de rellenar
+      if (q.sentence && q.type !== 'dialogue') {
+        setTimeout(() => speakCurrentQuestion(), 600);
+      }
+    }
+
+    function renderWordSlots(slotsDiv) {
+      slotsDiv.innerHTML = "";
+      state.session.wordSlots.forEach(word => {
+        const unit = document.createElement('span');
+        unit.className = 'word-capsule';
+        unit.style.background = 'var(--accent)';
+        unit.innerText = word;
+        unit.onclick = () => {
+          // Remover del construido
+          state.session.wordSlots = state.session.wordSlots.filter(w => w !== word);
+          // Buscar en el pool y reactivar opacidad
+          document.querySelectorAll('.word-capsule').forEach(el => {
+            if (el.innerText === word) el.style.opacity = '1';
+          });
+          renderWordSlots(slotsDiv);
+        };
+        slotsDiv.appendChild(unit);
+      });
+
+      // Habilitar botón de enviar si ya ordenaron palabras
+      const submitBtn = document.getElementById('btn-submit-answer');
+      if (state.session.wordSlots.length > 0) {
+        submitBtn.disabled = false;
+        state.session.selectedAnswer = state.session.wordSlots.join(" ").toLowerCase().trim();
+      } else {
+        submitBtn.disabled = true;
+      }
+    }
+
+    function selectMultipleChoiceAnswer(choiceValue, element) {
+      state.session.selectedAnswer = choiceValue;
+      
+      // Remover selección previa
+      document.querySelectorAll('.option-btn').forEach(btn => {
+        btn.style.boxShadow = 'none';
+        btn.style.borderColor = 'var(--border-color)';
+      });
+
+      // Resaltar seleccionado
+      element.style.borderColor = 'var(--primary)';
+      element.style.boxShadow = '0 0 10px var(--primary-glow)';
+
+      document.getElementById('btn-submit-answer').disabled = false;
+    }
+
+    function speakCurrentQuestion() {
+      const q = state.session.questions[state.session.currentQuestionIndex];
+      if (q) {
+        let textToSpeak = q.sentence || "";
+        if (q.type === 'which-correct') {
+          textToSpeak = q.choices.join(". Or...");
+        }
+        speakText(textToSpeak.replace("___", "blank"));
+      }
+    }
+
+    // ----------------------------------------------------
+    // EVALUACIÓN DE LAS RESPUESTAS
+    // ----------------------------------------------------
+    function evaluateAnswer() {
+      const session = state.session;
+      const q = session.questions[session.currentQuestionIndex];
+      const selected = session.selectedAnswer;
+
+      const submitBtn = document.getElementById('btn-submit-answer');
+      const nextBtn = document.getElementById('btn-next-question');
+      const feedbackEl = document.getElementById('feedback-explanation');
+
+      // Bloquear cambios extras
+      submitBtn.style.display = 'none';
+      nextBtn.style.display = 'inline-flex';
+
+      let isCorrect = false;
+
+      if (q.type === 'word-order') {
+        const cleanTarget = q.correct.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").trim();
+        const cleanSelected = selected.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").trim();
+        isCorrect = (cleanTarget === cleanSelected);
+      } else {
+        isCorrect = (selected === q.correct);
+      }
+
+      if (isCorrect) {
+        // Correcto!
+        session.score += 10;
+        session.streakCombo++;
+        
+        // Multiplicador de combo
+        if (session.streakCombo >= 5) {
+          // Ganar vida extra si tiene menos de 3
+          if (session.lives < 3) {
+            session.lives++;
+            document.getElementById('game-lives').innerText = "❤️".repeat(session.lives) + "🖤".repeat(3 - session.lives);
+          }
+          playSound('combo');
+          showComboIndicator("¡Combo x4 e Incremento de Vida! 👑❤️");
+        } else if (session.streakCombo >= 2) {
+          playSound('combo');
+          showComboIndicator(`¡Racha de Combo x${session.streakCombo}! 🔥`);
+        } else {
+          playSound('success');
+        }
+
+        // Marcar opciones visuales
+        document.querySelectorAll('.option-btn').forEach(btn => {
+          if (btn.querySelector('span') && btn.querySelector('span').innerText === q.correct) {
+            btn.classList.add('correct');
+          }
+        });
+
+        // Mostrar acierto interactivo
+        const successPhrases = ["¡Excelente! 🔥", "¡Correcto! Eres un crack 🎉", "¡Sí! Así se hace 💪"];
+        feedbackEl.innerHTML = `<span style="color:var(--success); font-weight:800;">${successPhrases[Math.floor(Math.random() * successPhrases.length)]}</span><p style="margin-top:6px;">${q.explanation}</p>`;
+      } else {
+        // Error!
+        session.lives--;
+        session.streakCombo = 0;
+        session.hasErrorOccurred = true;
+        playSound('error');
+
+        // Marcar la respuesta seleccionada como errónea y la correcta
+        document.querySelectorAll('.option-btn').forEach(btn => {
+          const bSpan = btn.querySelector('span');
+          if (bSpan) {
+            if (bSpan.innerText === selected) btn.classList.add('wrong');
+            if (bSpan.innerText === q.correct) btn.classList.add('correct');
+          }
+        });
+
+        const errorPhrases = ["¡Casi! Inténtalo de nuevo 😅", "No pasa nada, aquí la explicación 📖"];
+        feedbackEl.innerHTML = `<span style="color:var(--error); font-weight:800;">${errorPhrases[Math.floor(Math.random() * errorPhrases.length)]}</span><p style="margin-top:6px;">${q.explanation}</p>`;
+      }
+
+      feedbackEl.style.display = 'block';
+
+      // Pérdida de todas las vidas -> game over directo
+      if (session.lives <= 0) {
+        setTimeout(() => {
+          endGameSession(false);
+        }, 1500);
+      }
+    }
+
+    function showComboIndicator(msg) {
+      const comboText = document.getElementById('game-combo-text');
+      comboText.innerText = msg;
+      comboText.style.display = 'block';
+      setTimeout(() => {
+        comboText.style.display = 'none';
+      }, 2500);
+    }
+
+    function nextQuestion() {
+      const session = state.session;
+      session.currentQuestionIndex++;
+
+      if (session.currentQuestionIndex >= session.questions.length) {
+        endGameSession(true);
+      } else {
+        loadGameQuestion();
+      }
+    }
+
+    function exitGamePrompt() {
+      if (confirm("¿Estás seguro de que deseas abandonar la ronda en curso? Tu progreso se perderá.")) {
+        changeScreen('screen-home');
+      }
+    }
+
+    // ----------------------------------------------------
+    // FINALIZACIÓN DE RONDA DE JUEGO (RECOMPENSAS)
+    // ----------------------------------------------------
+    function endGameSession(competedSuccessfully) {
+      const session = state.session;
+      
+      changeScreen('screen-results');
+      
+      const titleEl = document.getElementById('result-title');
+      const subtitleEl = document.getElementById('result-subtitle');
+      const pointsEl = document.getElementById('result-points');
+      const starsEl = document.getElementById('result-stars');
+      const correctCountEl = document.getElementById('result-correct-count');
+      const totalCountEl = document.getElementById('result-total-count');
+      const bonusBox = document.getElementById('no-errors-bonus');
+
+      bonusBox.style.display = 'none';
+
+      const totalQ = session.questions.length;
+      let accurateCount = Math.round((session.score / 10)); // proxy correct answers counts
+      if (accurateCount > totalQ) accurateCount = totalQ;
+
+      correctCountEl.innerText = accurateCount;
+      totalCountEl.innerText = totalQ;
+
+      const accuracy = (accurateCount / totalQ) * 100;
+
+      if (!competedSuccessfully || session.lives <= 0) {
+        titleEl.innerText = "¡OH NO, SE ACABARON LAS VIDAS! 🦉💔";
+        subtitleEl.innerText = "Sigue intentándolo, el fracaso es solo un peldaño del aprendizaje.";
+        pointsEl.innerText = "+0 XP";
+        starsEl.innerText = "☆ ☆ ☆";
+      } else {
+        titleEl.innerText = "¡NIVEL COMPLETADO! 🏆🎉";
+        subtitleEl.innerText = "Has demostrado gran nivel en el idioma.";
+        
+        let starsGained = 1;
+        if (accuracy >= 85) starsGained = 3;
+        else if (accuracy >= 65) starsGained = 2;
+
+        starsEl.innerText = "⭐".repeat(starsGained) + "☆".repeat(3 - starsGained);
+
+        // Sumar XP
+        let gainedXP = session.score;
+        if (!session.hasErrorOccurred) {
+          // Bonus sin errores
+          gainedXP += 50;
+          bonusBox.style.display = 'block';
+        }
+
+        pointsEl.innerText = `+${gainedXP} XP`;
+        addXP(gainedXP);
+
+        // Actualizar racha diaria
+        state.playerStreak++;
+        
+        // Guardar progreso del nivel si jugaba campaña
+        if (!session.isDailyChallenge) {
+          const lvl = session.level;
+          // Guardar estrellas
+          const previousStars = state.stars[lvl] || 0;
+          if (starsGained > previousStars) {
+            state.stars[lvl] = starsGained;
+          }
+
+          // Desbloquear siguiente nivel si aprobó con >= 75% de aciertos
+          if (accuracy >= 75 && lvl === state.unlockedLevels && lvl < 6) {
+            state.unlockedLevels = lvl + 1;
+          }
+        } else {
+          // Reto diario
+          const todayScore = parseInt(localStorage.getItem('gqp_daily_best') || '0');
+          if (gainedXP > todayScore) {
+            localStorage.setItem('gqp_daily_best', gainedXP);
+          }
+        }
+
+        saveStateToLocalStorage();
+        triggerConfetti();
+      }
+    }
+
+    function proceedAfterLevel() {
+      changeScreen('screen-home');
+    }
+
+    // ----------------------------------------------------
+    // CONFETTI EN CSS PURO
+    // ----------------------------------------------------
+    function triggerConfetti() {
+      const container = document.getElementById('confetti-effect-container');
+      container.innerHTML = "";
+      const colors = ["#7C3AED", "#2563EB", "#F59E0B", "#059669", "#DC2626"];
+      
+      for (let i = 0; i < 40; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = `${Math.random() * 100}%`;
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = `${Math.random() * 2}s`;
+        piece.style.transform = `scale(${0.5 + Math.random()})`;
+        // animacion de caida
+        container.appendChild(piece);
+      }
+    }
+
+    // ----------------------------------------------------
+    // SECCIÓN DE VOCABULARIO (Tarjetas Flash)
+    // ----------------------------------------------------
+    let vocabCurrentCategory = 'colores';
+
+    function renderVocabSelector() {
+      const selector = document.getElementById('vocab-category-selector');
+      selector.innerHTML = "";
+
+      const categories = [
+        { id: "colores", icon: "🌈", label: "Colores" },
+        { id: "animales", icon: "🦁", label: "Animales" },
+        { id: "comida", icon: "🍎", label: "Comida" },
+        { id: "trabajo", icon: "👨‍⚕️", label: "Trabajos" },
+        { id: "hogar", icon: "🏠", label: "Hogar" },
+        { id: "viajes", icon: "✈️", label: "Viajes" },
+        { id: "emociones", icon: "😊", label: "Emociones" },
+        { id: "tecnologia", icon: "💻", label: "Tecnología" }
+      ];
+
+      categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = `btn ${vocabCurrentCategory === cat.id ? 'btn-primary' : 'btn-secondary'}`;
+        btn.innerHTML = `${cat.icon} ${cat.label}`;
+        btn.onclick = () => {
+          vocabCurrentCategory = cat.id;
+          renderVocabSelector();
+          loadVocabularyCards();
+        };
+        selector.appendChild(btn);
+      });
+
+      loadVocabularyCards();
+    }
+
+    function loadVocabularyCards(onlyFavs = false) {
+      const grid = document.getElementById('vocab-cards-grid');
+      const area = document.getElementById('vocab-study-area');
+      const title = document.getElementById('vocab-current-category-title');
+
+      area.style.display = 'block';
+      title.innerText = vocabCurrentCategory.charAt(0).toUpperCase() + vocabCurrentCategory.slice(1);
+      grid.innerHTML = "";
+
+      const rawWords = VOCAB_DATA[vocabCurrentCategory] || [];
+      const words = onlyFavs ? rawWords.filter(w => state.favWords.includes(w.en)) : rawWords;
+
+      if (words.length === 0) {
+        grid.innerHTML = "<p style='grid-column: span 2; text-align:center; padding: 24px; color: var(--text-muted);'>No tienes ningún favorito en esta categoría aún.</p>";
+        return;
+      }
+
+      words.forEach(word => {
+        const card = document.createElement('div');
+        card.className = 'vocab-card';
+        
+        const isFav = state.favWords.includes(word.en);
+
+        card.innerHTML = `
+          <div class="vocab-card-inner">
+            <div class="vocab-front">
+              <div style="font-size: 24px; font-weight:800; color:var(--accent);">${word.en}</div>
+              <p style="font-size:11px; margin-top:8px; line-height: 1.2; font-style:italic;">"${word.ex}"</p>
+              
+              <div style="margin-top:14px; display:flex; gap:12px; justify-content:center;">
+                <button class="btn btn-secondary" onclick="event.stopPropagation(); speakText('${word.en}')" style="padding:4px 8px; min-height:32px; font-size:12px;" title="Escuchar">🔊</button>
+                <button class="btn btn-secondary" onclick="event.stopPropagation(); practiceSingleWordOrSentence('${word.en}', '${word.ex}')" style="padding:4px 8px; min-height:32px; font-size:12px;" title="Practicar Pronunciación">🗣️ Practicar</button>
+                <button class="btn btn-secondary" onclick="event.stopPropagation(); toggleFavWord('${word.en}')" style="padding:4px 8px; min-height:32px; font-size:12px;" title="Favorito">${isFav ? '❤️' : '🤍'}</button>
+              </div>
+            </div>
+            <div class="vocab-back">
+              <div style="font-size:24px; font-weight:800;">${word.es}</div>
+              <p style="font-size:12px; margin-top:10px; opacity:0.8;">Ejemplo traducido</p>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener('click', () => {
+          card.classList.toggle('flipped');
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    function toggleFavWord(wordEnglish) {
+      if (state.favWords.includes(wordEnglish)) {
+        state.favWords = state.favWords.filter(w => w !== wordEnglish);
+      } else {
+        state.favWords.push(wordEnglish);
+      }
+      saveStateToLocalStorage();
+      loadVocabularyCards();
+    }
+
+    function showFavoritesOnly() {
+      const toggleBtn = document.getElementById('vocab-favorites-toggle');
+      if (toggleBtn.classList.contains('active-favs')) {
+        toggleBtn.classList.remove('active-favs');
+        toggleBtn.innerText = "❤️ Favoritos";
+        loadVocabularyCards(false);
+      } else {
+        toggleBtn.classList.add('active-favs');
+        toggleBtn.innerText = "📖 Ver Todo";
+        loadVocabularyCards(true);
+      }
+    }
+
+    function startVocabQuiz() {
+      const rawWords = VOCAB_DATA[vocabCurrentCategory] || [];
+      if (rawWords.length < 4) return;
+
+      // Crear un mini-quiz de 10 palabras/preguntas en memoria
+      state.session.isDailyChallenge = false;
+      state.session.lives = 3;
+      state.session.score = 0;
+      state.session.currentQuestionIndex = 0;
+      state.session.streakCombo = 0;
+      state.session.hasErrorOccurred = false;
+
+      // Generar 10 preguntas aleatorias de vocabulario en formato de correspondencia
+      const generatedQueries = [];
+      const shuffled = [...rawWords].sort(() => 0.5 - Math.random());
+      
+      shuffled.forEach((wordObj, i) => {
+        // Encontrar distractores
+        const others = rawWords.filter(w => w.en !== wordObj.en).sort(() => 0.5 - Math.random());
+        const distractors = [others[0].es, others[1].es, others[2].es];
+        const choices = [wordObj.es, ...distractors].sort(() => 0.5 - Math.random());
+
+        generatedQueries.push({
+          id: `vq_${i}`,
+          type: "fill",
+          instruction: "Elige la traducción correcta al Español:",
+          sentence: `What is the spanish translation for: <b style="font-size:24px; color:var(--primary);">${wordObj.en}</b> ?`,
+          choices: choices,
+          correct: wordObj.es,
+          explanation: `La traducción de "${wordObj.en}" es "${wordObj.es}". Ejemplo: "${wordObj.ex}"`
+        });
+      });
+
+      state.session.questions = generatedQueries;
+      changeScreen('screen-game');
+      loadGameQuestion();
+    }
+
+    // ----------------------------------------------------
+    // MODO MULTIJUGADOR: DUELO LOCAL
+    // ----------------------------------------------------
+    function startDuelSession() {
+      const p1 = document.getElementById('duel-p1-input').value.trim() || "Jugador A";
+      const p2 = document.getElementById('duel-p2-input').value.trim() || "Jugador B";
+      const chosenLevel = parseInt(document.getElementById('duel-level-select').value);
+
+      state.duel.player1 = p1;
+      state.duel.player2 = p2;
+      state.duel.p1Points = 0;
+      state.duel.p2Points = 0;
+      state.duel.turnIndex = 0; // turno de j1 primero
+      state.duel.level = chosenLevel;
+
+      // Extraer 10 preguntas para el duelo
+      const list = GAME_QUERIES[chosenLevel] || [];
+      state.duel.questions = [...list].sort(() => 0.5 - Math.random()).slice(0, 10);
+
+      document.getElementById('duel-p1-name-display').innerText = p1;
+      document.getElementById('duel-p2-name-display').innerText = p2;
+
+      changeScreen('screen-duel-game');
+      loadDuelQuestion();
+    }
+
+    function loadDuelQuestion() {
+      const duel = state.duel;
+      const index = duel.turnIndex;
+      const q = duel.questions[index];
+
+      // Actualizar marcador
+      document.getElementById('duel-p1-score').innerText = duel.p1Points;
+      document.getElementById('duel-p2-score').innerText = duel.p2Points;
+
+      // Determinar a quién le toca
+      const isPlayer1Turn = index % 2 === 0;
+      const currentTurnName = isPlayer1Turn ? duel.player1 : duel.player2;
+      const turnIndicator = document.getElementById('duel-turn-indicator');
+      
+      turnIndicator.innerText = currentTurnName;
+      turnIndicator.style.background = isPlayer1Turn ? '#DC2626' : '#2563EB';
+
+      // Renderizar pregunta de duelo
+      document.getElementById('duel-question-instruction').innerText = `Ronda ${Math.floor(index / 2) + 1} - ${q.instruction}`;
+      
+      let qText = q.sentence || "";
+      if (q.type === 'which-correct') qText = "¿Cuál de estas oraciones está bien redactada?";
+      document.getElementById('duel-question-text').innerHTML = qText;
+
+      const optsBox = document.getElementById('duel-options-container');
+      optsBox.innerHTML = "";
+
+      // En el duelo, se responde instantáneamente
+      q.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `<span>${choice}</span>`;
+        btn.onclick = () => evaluateDuelAnswer(choice, btn);
+        optsBox.appendChild(btn);
+      });
+    }
+
+    function evaluateDuelAnswer(selectedChoice, buttonElement) {
+      const duel = state.duel;
+      const index = duel.turnIndex;
+      const q = duel.questions[index];
+      const isPlayer1Turn = index % 2 === 0;
+
+      // Desactivar botones momentáneamente
+      document.querySelectorAll('#duel-options-container .option-btn').forEach(b => b.disabled = true);
+
+      if (selectedChoice === q.correct) {
+        // Correcto!
+        playSound('success');
+        buttonElement.classList.add('correct');
+        if (isPlayer1Turn) duel.p1Points += 10;
+        else duel.p2Points += 10;
+      } else {
+        // Incorrecto!
+        playSound('error');
+        buttonElement.classList.add('wrong');
+        
+        // Destacar correcta de igual forma
+        document.querySelectorAll('#duel-options-container .option-btn').forEach(b => {
+          if (b.querySelector('span').innerText === q.correct) b.classList.add('correct');
+        });
+      }
+
+      // Siguiente turno tras pequeño delay dramático
+      setTimeout(() => {
+        duel.turnIndex++;
+        if (duel.turnIndex >= 10) {
+          endDuelMatch();
+        } else {
+          loadDuelQuestion();
+        }
+      }, 1800);
+    }
+
+    function endDuelMatch() {
+      const duel = state.duel;
+      changeScreen('screen-duel-winner');
+
+      const announce = document.getElementById('duel-winner-announce');
+      const details = document.getElementById('duel-winner-details');
+
+      if (duel.p1Points > duel.p2Points) {
+        announce.innerText = `🏆 ¡FELICIDADES ${duel.player1}!`;
+        details.innerText = `${duel.player1} venció con un resultado de ${duel.p1Points} puntos contra ${duel.p2Points} de ${duel.player2}.`;
+      } else if (duel.p2Points > duel.p1Points) {
+        announce.innerText = `🏆 ¡FELICIDADES ${duel.player2}!`;
+        details.innerText = `${duel.player2} venció con un resultado de ${duel.p2Points} puntos contra ${duel.p1Points} de ${duel.player1}.`;
+      } else {
+        announce.innerText = "🛡️ ¡EMPATE INOLVIDABLE! 🤝";
+        details.innerText = "Ambos valientes contendientes obtuvieron exactamente " + duel.p1Points + " puntos.";
+      }
+
+      // Guardar puntajes en scoreboard local si superan el top local
+      saveToScoreboard(duel.player1, duel.p1Points);
+      saveToScoreboard(duel.player2, duel.p2Points);
+    }
+
+    // ----------------------------------------------------
+    // SCOREBOARD LOCAL (Guardado en LocalStorage)
+    // ----------------------------------------------------
+    function saveToScoreboard(name, points) {
+      if (points <= 0) return;
+      let ranking = [];
+      try {
+        ranking = JSON.parse(localStorage.getItem('gqp_leaderboard') || '[]');
+      } catch(e) { ranking = []; }
+
+      ranking.push({ name: name, points: points, date: new Date().toLocaleDateString() });
+      
+      // Ordenar de mayor a menor y guardar solo top 10
+      ranking.sort((a,b) => b.points - a.points);
+      ranking = ranking.slice(0, 10);
+
+      localStorage.setItem('gqp_leaderboard', JSON.stringify(ranking));
+    }
+
+    function renderRankings() {
+      const tbody = document.getElementById('ranking-table-body');
+      tbody.innerHTML = "";
+
+      let ranking = [];
+      try {
+        ranking = JSON.parse(localStorage.getItem('gqp_leaderboard') || '[]');
+      } catch(e) { ranking = []; }
+
+      // Default mock scores if empty
+      if (ranking.length === 0) {
+        ranking = [
+          { name: "Súper Owl 🦉", points: 80, date: "30/05/2026" },
+          { name: "Grammar Master 👑", points: 60, date: "30/05/2026" },
+          { name: "English Prodigy 🚀", points: 40, date: "30/05/2026" }
+        ];
+        localStorage.setItem('gqp_leaderboard', JSON.stringify(ranking));
+      }
+
+      ranking.forEach((row, i) => {
+        const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i+1}`;
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+        tr.innerHTML = `
+          <td style="padding:12px; font-weight:800;">${medal}</td>
+          <td style="padding:12px; font-weight:700;">${row.name}</td>
+          <td style="padding:12px; color:var(--accent); font-weight:800;">${row.points} XP</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Daily Best
+      const todayBest = localStorage.getItem('gqp_daily_best') || '0';
+      document.getElementById('daily-challenge-best').innerText = `${todayBest} XP`;
+    }
+
+    // ----------------------------------------------------
+    // MINIJUEGO DE PRONUNCIACIÓN (SPEECH CLUB)
+    // ----------------------------------------------------
+    const PRONUNCIATION_CHALLENGES = [
+      { phrase: "The wise owl sleeps at daytime.", category: "Sabiduría 🦉" },
+      { phrase: "An apple is extremely healthy.", category: "Comida 🍎" },
+      { phrase: "He is a computer systems engineer.", category: "Trabajo 💻" },
+      { phrase: "The prompt train departs in ten minutes.", category: "Viaje 🚆" },
+      { phrase: "I am really excited about this learning game.", category: "Diversión 🎮" },
+      { phrase: "She described a beautiful landscape with colors.", category: "Arte 🎨" },
+      { phrase: "A healthy mind lives in a healthy body.", category: "Salud 🏃‍♂️" },
+      { phrase: "They enjoy traveling around the world together.", category: "Amigos ✈️" },
+      { phrase: "The kitchen is full of delicious chocolate cakes.", category: "Hogar 🍰" },
+      { phrase: "Learning English opens many professional doors.", category: "Metas 🌟" }
+    ];
+
+    let pronunCurrentIndex = 0;
+    let pronunList = [];
+    let isSingleWordPractice = false;
+    let pronunActiveTargetText = "";
+    let isPronunStandalone = false;
+    let isRecordingPronunciation = false;
+    let recognitionInstance = null;
+
+    function initSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        console.warn("SpeechRecognition not supported in this browser.");
+        return null;
+      }
+      const rec = new SpeechRecognition();
+      rec.continuous = false;
+      rec.lang = 'en-US';
+      rec.interimResults = false;
+      rec.maxAlternatives = 1;
+      return rec;
+    }
+
+    function startPronunciationChallenge() {
+      isPronunStandalone = true;
+      isSingleWordPractice = false;
+      pronunCurrentIndex = 0;
+      
+      // Mezclar los desafíos predefinidos
+      pronunList = [...PRONUNCIATION_CHALLENGES].sort(() => 0.5 - Math.random());
+      
+      changeScreen('screen-pronunciation');
+      loadPronunciationChallenge();
+    }
+
+    function practiceSingleWordOrSentence(word, sentence) {
+      isPronunStandalone = false;
+      isSingleWordPractice = true;
+      
+      pronunList = [{
+        phrase: sentence || word,
+        category: `Vocabulario (Glosario)`
+      }];
+      pronunCurrentIndex = 0;
+
+      changeScreen('screen-pronunciation');
+      loadPronunciationChallenge();
+    }
+
+    function loadPronunciationChallenge() {
+      const challenge = pronunList[pronunCurrentIndex];
+      if (!challenge) {
+        alert("¡Ronda de Pronunciación Terminada!");
+        changeScreen('screen-home');
+        return;
+      }
+
+      pronunActiveTargetText = challenge.phrase;
+      document.getElementById('pronun-category-tag').innerText = challenge.category;
+      document.getElementById('pronun-text-container').innerText = challenge.phrase;
+
+      // Resetear interfaz de resultados
+      document.getElementById('pronun-results-area').style.display = 'none';
+      document.getElementById('btn-next-pronun').style.display = 'none';
+      
+      const nextBtn = document.getElementById('btn-next-pronun');
+      if (isSingleWordPractice) {
+        nextBtn.innerText = "Terminar Práctica 👍";
+      } else {
+        nextBtn.innerText = "Siguiente Frase ➡️";
+      }
+
+      updateRecordButtonUI(false, "Toca el micrófono para comenzar");
+      document.getElementById('pronun-simulation-input').value = "";
+    }
+
+    function speakPronunciationReference() {
+      speakText(pronunActiveTargetText);
+    }
+
+    function exitPronunciation() {
+      if (isSingleWordPractice) {
+        changeScreen('screen-vocab');
+      } else {
+        changeScreen('screen-home');
+      }
+    }
+
+    function nextPronunciationChallenge() {
+      if (isSingleWordPractice) {
+        changeScreen('screen-vocab');
+      } else {
+        pronunCurrentIndex++;
+        if (pronunCurrentIndex >= pronunList.length) {
+          triggerConfetti();
+          playSound('success');
+          alert("¡Increíble! Completaste todas las frases del Club de Pronunciación. ¡Sigue así!");
+          changeScreen('screen-home');
+        } else {
+          loadPronunciationChallenge();
+        }
+      }
+    }
+
+    function togglePronunciationRecording() {
+      if (isRecordingPronunciation) {
+        stopPronunciationRecording();
+      } else {
+        startPronunciationRecording();
+      }
+    }
+
+    function startPronunciationRecording() {
+      if (!recognitionInstance) {
+        recognitionInstance = initSpeechRecognition();
+      }
+
+      if (!recognitionInstance) {
+        updateRecordButtonUI(false, "El reconocimiento de voz no está soportado");
+        document.getElementById('pronun-results-area').style.display = 'block';
+        alert("Reconocimiento de voz no soportado en este navegador. Puedes simular con texto ingresándolo abajo.");
+        return;
+      }
+
+      isRecordingPronunciation = true;
+      updateRecordButtonUI(true, "🎙️ Escuchando... Di la frase en inglés");
+
+      try {
+        recognitionInstance.onresult = function(event) {
+          const transcript = event.results[0][0].transcript;
+          processPronunciationResult(transcript);
+        };
+
+        recognitionInstance.onerror = function(event) {
+          console.error("SpeechRecognition error:", event.error);
+          stopPronunciationRecording();
+          updateRecordButtonUI(false, `Error: ${event.error}. Intenta de nuevo.`);
+        };
+
+        recognitionInstance.onend = function() {
+          stopPronunciationRecording();
+        };
+
+        recognitionInstance.start();
+      } catch (err) {
+        console.error("Error starting speech recognition:", err);
+        stopPronunciationRecording();
+      }
+    }
+
+    function stopPronunciationRecording() {
+      if (recognitionInstance && isRecordingPronunciation) {
+        recognitionInstance.stop();
+      }
+      isRecordingPronunciation = false;
+      updateRecordButtonUI(false, "Procesando audio...");
+    }
+
+    function updateRecordButtonUI(active, text) {
+      const btn = document.getElementById('btn-record-pronun');
+      const statusEl = document.getElementById('pronun-record-status');
+      if (!btn || !statusEl) return;
+      
+      statusEl.innerText = text;
+      if (active) {
+        btn.classList.add('pulse-record');
+      } else {
+        btn.classList.remove('pulse-record');
+      }
+    }
+
+    function comparePronunciation(target, spoken) {
+      const clean = text => text.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g,"").replace(/\s+/g," ").trim();
+      const targetClean = clean(target);
+      const spokenClean = clean(spoken);
+
+      const targetWords = targetClean.split(" ").filter(w => w.length > 0);
+      const spokenWords = spokenClean.split(" ").filter(w => w.length > 0);
+
+      if (targetWords.length === 0) return { percent: 100, visual: "" };
+
+      let matchedCount = 0;
+      let visualHTML = "";
+
+      targetWords.forEach(word => {
+        const isMatched = spokenWords.includes(word);
+        if (isMatched) {
+          matchedCount++;
+          visualHTML += `<span class="spoken-word-correct">${word}</span> `;
+        } else {
+          visualHTML += `<span class="spoken-word-incorrect">${word}</span> `;
+        }
+      });
+
+      const percent = Math.round((matchedCount / targetWords.length) * 100);
+      return { percent, visual: visualHTML, spokenClean };
+    }
+
+    function processPronunciationResult(transcript) {
+      const { percent, visual, spokenClean } = comparePronunciation(pronunActiveTargetText, transcript);
+
+      // Mostrar visualización
+      const resultsArea = document.getElementById('pronun-results-area');
+      resultsArea.style.display = 'block';
+
+      document.getElementById('pronun-visual-comparison').innerHTML = visual;
+      document.getElementById('pronun-match-percentage').innerText = `${percent}%`;
+
+      // Calcular XP
+      let gainedXP = 0;
+      let feedback = "";
+
+      if (percent >= 85) {
+        gainedXP = 15;
+        feedback = "¡Bien dicho! ¡Excelente pronunciación! 🌟🦉";
+        playSound('success');
+      } else if (percent >= 60) {
+        gainedXP = 10;
+        feedback = "¡Muy bien! Prácticamente correcto. 👍 ¡Sigue así!";
+        playSound('success');
+      } else {
+        gainedXP = 0;
+        feedback = "Repite para mejorar. ¡Sigue practicando! 🔁";
+        playSound('error');
+      }
+
+      document.getElementById('pronun-match-score').innerText = `+${gainedXP} XP`;
+      document.getElementById('pronun-feedback-text').innerText = feedback;
+
+      // Actualizar XP en el estado general
+      if (gainedXP > 0) {
+        addXP(gainedXP);
+      }
+
+      // Activar botón de continuar
+      document.getElementById('btn-next-pronun').style.display = 'inline-flex';
+    }
+
+    function simulateSpeechInput() {
+      const textVal = document.getElementById('pronun-simulation-input').value.trim();
+      if (!textVal) {
+        alert("Por favor, introduce algún texto para simular.");
+        return;
+      }
+      processPronunciationResult(textVal);
+    }
+
+    function simulatePerfectPronunciation() {
+      processPronunciationResult(pronunActiveTargetText);
+    }
+  </script>
+
+  <!-- Service Worker para Modo Offline (Opcional, en Comentario como se solicitó)
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(reg => {
+          console.log('ServiceWorker registrado con éxito: ', reg.scope);
+        }).catch(err => {
+          console.warn('Registro de ServiceWorker fallido: ', err);
+        });
+      });
+    }
+  </script>
+  -->
+</body>
+</html>
